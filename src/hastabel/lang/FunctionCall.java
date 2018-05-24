@@ -13,6 +13,7 @@ class FunctionCall extends Expression
       final List<Expression> params
    )
    {
+      super();
       this.parent = parent;
       this.params = params;
    }

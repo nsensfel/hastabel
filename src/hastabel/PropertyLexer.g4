@@ -1,5 +1,7 @@
 lexer grammar PropertyLexer;
 
+@header {package hastabel;}
+
 fragment SEP: [ \t\r\n]+;
 
 L_PAREN: '(';

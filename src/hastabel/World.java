@@ -13,6 +13,7 @@ public class World extends LogicWorld
    private final TemplateInstances template_inst_mgr;
 
    private final Strings strings_mgr;
+   private final Variables variables_mgr;
 
    private final Types types_mgr;
 
@@ -32,6 +33,7 @@ public class World extends LogicWorld
       string_type = types_mgr.declare(null, "String");
 
       strings_mgr = new Strings(string_type, this);
+      variables_mgr = new Variables();
 
       is_erroneous = false;
    }
@@ -80,5 +82,10 @@ public class World extends LogicWorld
    public Strings get_strings_manager ()
    {
       return strings_mgr;
+   }
+
+   public Variables get_variables_manager ()
+   {
+      return variables_mgr;
    }
 }

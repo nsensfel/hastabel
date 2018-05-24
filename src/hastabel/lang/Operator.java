@@ -1,6 +1,7 @@
 package hastabel.lang;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public enum Operator
 {

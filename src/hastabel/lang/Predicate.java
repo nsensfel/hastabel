@@ -185,7 +185,7 @@ public class Predicate
       return result;
    }
 
-   public Formula as_function_ (final Expression... e_params)
+   public Expression as_function_ (final Expression... e_params)
    {
       final ArrayList<Expression> params;
 

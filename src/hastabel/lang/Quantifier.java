@@ -12,7 +12,7 @@ public class Quantifier extends Formula
    (
       final Variable parent,
       final Formula formula,
-      final boolean is_forall;
+      final boolean is_forall
    )
    {
       this.parent = parent;

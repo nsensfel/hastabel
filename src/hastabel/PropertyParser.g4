@@ -7,8 +7,14 @@ options
 
 @header
 {
+   package hastabel;
+
    import hastabel.World;
    import hastabel.lang.*;
+
+   import java.util.Arrays;
+   import java.util.ArrayList;
+   import java.util.List;
 }
 
 @members
@@ -86,7 +92,7 @@ id_or_string_or_fun [Variable current_node]
       }
       else
       {
-         $value = WORLD.get_variables_manager().get_variable(($ID.text));
+         $value = WORLD.get_variables_manager().get(($ID.text));
 
          if (($value) == null)
          {
@@ -147,11 +153,11 @@ predicate [Variable current_node]
    {
       final Expression expression;
       final List<Expression> ids;
-      final Predicate predicate;
+      final hastabel.lang.Predicate predicate;
 
-      predicate = WORLD.get_predicates_manager().get_predicate(($ID.text));
+      predicate = WORLD.get_predicates_manager().get(($ID.text));
 
-      if (predicate == (Predicate) null)
+      if (predicate == (hastabel.lang.Predicate) null)
       {
          System.err.println
          (
@@ -189,11 +195,11 @@ function [Variable current_node]
    {
       final Expression function_call;
       final List<Expression> ids;
-      final Predicate predicate;
+      final hastabel.lang.Predicate predicate;
 
-      predicate = WORLD.get_predicates_manager().get_predicate(($ID.text));
+      predicate = WORLD.get_predicates_manager().get(($ID.text));
 
-      if (predicate == (Predicate) null)
+      if (predicate == (hastabel.lang.Predicate) null)
       {
          System.err.println
          (
@@ -243,11 +249,11 @@ regex_special_predicate [Variable current_node]
 
    {
       final Expression[] params;
-      final Predicate string_matches;
+      final hastabel.lang.Predicate string_matches;
 
       params = new Expression[2];
       string_matches =
-         WORLD.get_predicates_manager().get_predicate("string_matches");
+         WORLD.get_predicates_manager().get("string_matches");
 
       if (string_matches == null)
       {
@@ -375,7 +381,7 @@ variable_declaration
    {
       final Type t;
 
-      t = WORLD.get_types_manager().get(($type.value));
+      t = WORLD.get_types_manager().get(($type.text));
 
       if (t == (Type) null)
       {
@@ -393,7 +399,7 @@ variable_declaration
          WORLD.invalidate();
       }
 
-      $variable = WORLD.get_variables_manager().add_variable(t, ($var.value));
+      $variable = WORLD.get_variables_manager().add_variable(t, ($var.text));
 
       if (($variable) == null)
       {
@@ -558,7 +564,7 @@ ax_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Predicate node_connect;
+      final hastabel.lang.Predicate node_connect;
 
       if (current_node == null)
       {
@@ -625,7 +631,7 @@ ex_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Predicate node_connect;
+      final hastabel.lang.Predicate node_connect;
 
       if (current_node == null)
       {
@@ -693,7 +699,7 @@ ag_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate is_in_path, is_path_of;
 
       if (current_node == null)
       {
@@ -714,7 +720,7 @@ ag_operator [Variable current_node]
       is_in_path = WORLD.get_predicates_manager().get("is_in_path");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
       {
          WORLD.invalidate();
       }
@@ -780,7 +786,7 @@ eg_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate is_in_path, is_path_of;
 
       if (current_node == null)
       {
@@ -801,7 +807,7 @@ eg_operator [Variable current_node]
       is_in_path = WORLD.get_predicates_manager().get("is_in_path");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
       {
          WORLD.invalidate();
       }
@@ -867,7 +873,7 @@ af_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate is_in_path, is_path_of;
 
       if (current_node == null)
       {
@@ -888,7 +894,7 @@ af_operator [Variable current_node]
       is_in_path = WORLD.get_predicates_manager().get("is_in_path");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
       {
          WORLD.invalidate();
       }
@@ -954,7 +960,7 @@ ef_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate is_in_path, is_path_of;
 
       if (current_node == null)
       {
@@ -975,7 +981,7 @@ ef_operator [Variable current_node]
       is_in_path = WORLD.get_predicates_manager().get("is_in_path");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
       {
          WORLD.invalidate();
       }
@@ -1045,7 +1051,7 @@ au_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final Predicate is_path_of, is_in_path, is_before;
+      final hastabel.lang.Predicate is_path_of, is_in_path, is_before;
 
       if (current_node == null)
       {
@@ -1152,7 +1158,7 @@ eu_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final Predicate is_path_of, is_in_path, is_before;
+      final hastabel.lang.Predicate is_path_of, is_in_path, is_before;
 
       if (current_node == null)
       {
@@ -1256,7 +1262,7 @@ depth_no_parent_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path, node_of_path;
-      final Predicate depth, is_path_of, is_lower_than, is_in_path, is_before;
+      final hastabel.lang.Predicate depth, is_path_of, is_lower_than, is_in_path, is_before;
 
       if (current_node == null)
       {
@@ -1386,7 +1392,7 @@ depth_no_change_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path, node_of_path;
-      final Predicate depth, is_path_of, is_in_path, is_before;
+      final hastabel.lang.Predicate depth, is_path_of, is_in_path, is_before;
 
       if (current_node == null)
       {
