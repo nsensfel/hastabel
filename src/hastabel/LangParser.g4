@@ -37,7 +37,7 @@ lang_instr:
    {
    }
 
-   | (WS)* ADD_RELATION_KW (WS)* new_predicate (WS)*
+   | (WS)* ADD_PREDICATE_KW (WS)* new_predicate (WS)*
    {
    }
 

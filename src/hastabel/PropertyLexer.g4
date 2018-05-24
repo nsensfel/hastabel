@@ -9,7 +9,7 @@ R_PAREN: ')';
 L_BRAKT: '[';
 R_BRAKT: ']';
 
-TAG_EXISTING_KW: '(tag_existing' SEP;
+TAG_EXISTING_KW: '(seek' SEP;
 
 IFF_OPERATOR_KW: '(iff' SEP;
 AND_OPERATOR_KW: '(and' SEP;

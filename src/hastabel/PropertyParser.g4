@@ -699,7 +699,7 @@ ag_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final hastabel.lang.Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate contains_node, is_path_of;
 
       if (current_node == null)
       {
@@ -717,10 +717,10 @@ ag_operator [Variable current_node]
       }
 
       path_type = WORLD.get_types_manager().get("path");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
+      if ((path_type == null) || (is_path_of == null) || (contains_node == null))
       {
          WORLD.invalidate();
       }
@@ -745,7 +745,7 @@ ag_operator [Variable current_node]
                   next_node,
                   Formula.implies
                   (
-                     is_in_path.as_formula_(next_node, next_path),
+                     contains_node.as_formula_(next_path, next_node),
                      ($formula.result)
                   )
                )
@@ -786,7 +786,7 @@ eg_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final hastabel.lang.Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate contains_node, is_path_of;
 
       if (current_node == null)
       {
@@ -804,10 +804,10 @@ eg_operator [Variable current_node]
       }
 
       path_type = WORLD.get_types_manager().get("path");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
+      if ((path_type == null) || (is_path_of == null) || (contains_node == null))
       {
          WORLD.invalidate();
       }
@@ -832,7 +832,7 @@ eg_operator [Variable current_node]
                   next_node,
                   Formula.implies
                   (
-                     is_in_path.as_formula_(next_node, next_path),
+                     contains_node.as_formula_(next_path, next_node),
                      ($formula.result)
                   )
                )
@@ -873,7 +873,7 @@ af_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final hastabel.lang.Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate contains_node, is_path_of;
 
       if (current_node == null)
       {
@@ -891,10 +891,10 @@ af_operator [Variable current_node]
       }
 
       path_type = WORLD.get_types_manager().get("path");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
+      if ((path_type == null) || (is_path_of == null) || (contains_node == null))
       {
          WORLD.invalidate();
       }
@@ -919,7 +919,7 @@ af_operator [Variable current_node]
                   next_node,
                   Formula.and
                   (
-                     is_in_path.as_formula_(next_node, next_path),
+                     contains_node.as_formula_(next_path, next_node),
                      ($formula.result)
                   )
                )
@@ -960,7 +960,7 @@ ef_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final hastabel.lang.Predicate is_in_path, is_path_of;
+      final hastabel.lang.Predicate contains_node, is_path_of;
 
       if (current_node == null)
       {
@@ -978,10 +978,10 @@ ef_operator [Variable current_node]
       }
 
       path_type = WORLD.get_types_manager().get("path");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if ((path_type == null) || (is_path_of == null) || (is_in_path == null))
+      if ((path_type == null) || (is_path_of == null) || (contains_node == null))
       {
          WORLD.invalidate();
       }
@@ -1006,7 +1006,7 @@ ef_operator [Variable current_node]
                   next_node,
                   Formula.and
                   (
-                     is_in_path.as_formula_(next_node, next_path),
+                     contains_node.as_formula_(next_path, next_node),
                      ($formula.result)
                   )
                )
@@ -1051,7 +1051,7 @@ au_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final hastabel.lang.Predicate is_path_of, is_in_path, is_before;
+      final hastabel.lang.Predicate is_path_of, contains_node, is_before;
 
       if (current_node == null)
       {
@@ -1070,14 +1070,14 @@ au_operator [Variable current_node]
 
       path_type = WORLD.get_types_manager().get("path");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_before = WORLD.get_predicates_manager().get("is_before");
 
       if
       (
          (path_type == null)
          || (is_path_of == null)
-         || (is_in_path == null)
+         || (contains_node == null)
          || (is_before == null)
       )
       {
@@ -1104,7 +1104,7 @@ au_operator [Variable current_node]
                   f2_node,
                   Formula.and
                   (
-                     is_in_path.as_formula_(f2_node, next_path),
+                     contains_node.as_formula_(next_path, f2_node),
                      ($f2.result),
                      Formula.forall
                      (
@@ -1158,7 +1158,7 @@ eu_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path;
-      final hastabel.lang.Predicate is_path_of, is_in_path, is_before;
+      final hastabel.lang.Predicate is_path_of, contains_node, is_before;
 
       if (current_node == null)
       {
@@ -1177,14 +1177,14 @@ eu_operator [Variable current_node]
 
       path_type = WORLD.get_types_manager().get("path");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_before = WORLD.get_predicates_manager().get("is_before");
 
       if
       (
          (path_type == null)
          || (is_path_of == null)
-         || (is_in_path == null)
+         || (contains_node == null)
          || (is_before == null)
       )
       {
@@ -1211,7 +1211,7 @@ eu_operator [Variable current_node]
                   f2_node,
                   Formula.and
                   (
-                     is_in_path.as_formula_(f2_node, next_path),
+                     contains_node.as_formula_(next_path, f2_node),
                      ($f2.result),
                      Formula.forall
                      (
@@ -1262,7 +1262,7 @@ depth_no_parent_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path, node_of_path;
-      final hastabel.lang.Predicate depth, is_path_of, is_lower_than, is_in_path, is_before;
+      final hastabel.lang.Predicate depth, is_path_of, is_lower_than, contains_node, is_before;
 
       if (current_node == null)
       {
@@ -1282,7 +1282,7 @@ depth_no_parent_operator [Variable current_node]
       path_type = WORLD.get_types_manager().get("path");
       depth = WORLD.get_predicates_manager().get("depth");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_before = WORLD.get_predicates_manager().get("is_before");
       is_lower_than = WORLD.get_predicates_manager().get("is_lower_than");
 
@@ -1290,7 +1290,7 @@ depth_no_parent_operator [Variable current_node]
       (
          (path_type == null)
          || (is_path_of == null)
-         || (is_in_path == null)
+         || (contains_node == null)
          || (is_lower_than == null)
          || (is_before == null)
          || (depth == null)
@@ -1322,7 +1322,7 @@ depth_no_parent_operator [Variable current_node]
                   node_for_f,
                   Formula.and
                   (
-                     is_in_path.as_formula_(node_for_f, next_path),
+                     contains_node.as_formula_(next_path, node_for_f),
                      ($formula.result),
                      Formula.not
                      (
@@ -1392,7 +1392,7 @@ depth_no_change_operator [Variable current_node]
    {
       final Type path_type;
       final Variable next_path, node_of_path;
-      final hastabel.lang.Predicate depth, is_path_of, is_in_path, is_before;
+      final hastabel.lang.Predicate depth, is_path_of, contains_node, is_before;
 
       if (current_node == null)
       {
@@ -1412,14 +1412,14 @@ depth_no_change_operator [Variable current_node]
       path_type = WORLD.get_types_manager().get("path");
       depth = WORLD.get_predicates_manager().get("depth");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
-      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      contains_node = WORLD.get_predicates_manager().get("contains_node");
       is_before = WORLD.get_predicates_manager().get("is_before");
 
       if
       (
          (path_type == null)
          || (is_path_of == null)
-         || (is_in_path == null)
+         || (contains_node == null)
          || (is_before == null)
          || (depth == null)
       )
@@ -1450,7 +1450,7 @@ depth_no_change_operator [Variable current_node]
                   node_for_f,
                   Formula.and
                   (
-                     is_in_path.as_formula_(node_for_f, next_path),
+                     contains_node.as_formula_(next_path, node_for_f),
                      ($formula.result),
                      Formula.equals
                      (

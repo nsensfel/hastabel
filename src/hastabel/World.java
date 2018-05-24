@@ -52,12 +52,12 @@ public class World extends LogicWorld
 
       parser.lang_file(this);
 
-      if (!is_erroneous)
-      {
-         is_erroneous = !(new GraphToFirstOrder("path_")).run(this);
-      }
-
       return !is_erroneous;
+   }
+
+   public void ensure_first_order ()
+   {
+      is_erroneous = !(new GraphToFirstOrder("path_")).run(this);
    }
 
    public Formula load_property (final String filename)

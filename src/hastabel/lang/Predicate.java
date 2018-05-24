@@ -11,13 +11,25 @@ import java.util.ArrayList;
 
 public class Predicate
 {
-   private final List<Type> signature;
+   private final Collection<List<Type>> signatures;
    private final Set<List<Element>> members;
    private final String name;
 
    public Predicate (final List<Type> signature, final String name)
    {
-      this.signature = signature;
+      signatures = new ArrayList<List<Type>>(1);
+      signatures.add(signature);
+
+      this.name = name;
+
+      members = new HashSet<List<Element>>();
+   }
+
+   public Predicate (final Collection<List<Type>> signatures, final String name)
+   {
+      this.signatures = new ArrayList<List<Type>>();
+      this.signatures.addAll(signatures);
+
       this.name = name;
 
       members = new HashSet<List<Element>>();
@@ -48,7 +60,11 @@ public class Predicate
       }
    }
 
-   public boolean is_compatible_with (final List<Element> elements)
+   private boolean is_compatible_with_signature
+   (
+      final List<Element> elements,
+      final List<Type> signature
+   )
    {
       final Iterator<Element> e_iter;
       final Iterator<Type> s_iter;
@@ -72,14 +88,27 @@ public class Predicate
       return true;
    }
 
+   public boolean is_compatible_with (final List<Element> elements)
+   {
+      for (final List<Type> signature: signatures)
+      {
+         if (is_compatible_with_signature(elements, signature))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    public String get_name ()
    {
       return name;
    }
 
-   public List<Type> get_signature ()
+   public Collection<List<Type>> get_signatures ()
    {
-      return signature;
+      return signatures;
    }
 
    public Set<List<Element>> get_members ()
@@ -89,7 +118,7 @@ public class Predicate
 
    public Predicate shallow_copy ()
    {
-      return new Predicate(signature, name);
+      return new Predicate(signatures, name);
    }
 
    @Override
@@ -111,6 +140,11 @@ public class Predicate
    public int hashCode ()
    {
       return name.hashCode();
+   }
+
+   public void add_signature (final List<Type> signature)
+   {
+      signatures.add(signature);
    }
 
    public String get_definition ()
@@ -146,7 +180,7 @@ public class Predicate
       final Iterator<Type> s_iter;
 
       sb = new StringBuilder();
-      s_iter = signature.iterator();
+      s_iter = ((List<Type>) signatures.toArray()[0]).iterator();
 
       sb.append(name);
       sb.append(": ");

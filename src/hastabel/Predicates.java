@@ -38,17 +38,12 @@ public class Predicates
          return result;
       }
 
-      if (signature.equals(previous_instance.get_signature()))
+      if (previous_instance.get_signatures().contains(signature))
       {
          return previous_instance;
       }
 
-      System.err.println
-      (
-         "[F] Conflicting signatures for predicate \""
-         + name
-         + "\"."
-      );
+      previous_instance.add_signature(signature);
 
       return null;
    }
