@@ -1,6 +1,7 @@
 package hastabel;
 
 import hastabel.lang.Type;
+import hastabel.lang.Formula;
 
 import java.io.IOException;
 
@@ -52,6 +53,23 @@ public class World extends LogicWorld
       parser.lang_file(this);
 
       return !is_erroneous;
+   }
+
+   public Formula load_property (final String filename)
+   throws IOException
+   {
+      final Formula result;
+      final CommonTokenStream tokens;
+      final PropertyLexer lexer;
+      final PropertyParser parser;
+
+      lexer = new PropertyLexer(CharStreams.fromFileName(filename));
+      tokens = new CommonTokenStream(lexer);
+      parser = new PropertyParser(tokens);
+
+      result = parser.tag_existing(this).result;
+
+      return result;
    }
 
    public void invalidate ()

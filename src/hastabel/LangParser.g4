@@ -45,7 +45,7 @@ lang_instr:
    {
    }
 
-   | (WS)* ID (WS)* L_PAREN (WS)* ident_list (WS*) R_PAREN (WS)*
+   | (WS)* ID (WS)* L_PAREN (WS)* ident_or_string_list (WS*) R_PAREN (WS)*
    {
       final Predicate predicate;
       final List<Element> params;
@@ -61,11 +61,25 @@ lang_instr:
       {
          params = new ArrayList<Element>();
 
-         param_names = ($ident_list.list).iterator();
+         param_names = ($ident_or_string_list.list).iterator();
 
          while (param_names.hasNext())
          {
-            params.add(WORLD.get_elements_manager().get(param_names.next()));
+            final String elem_name;
+
+            elem_name = param_names.next();
+
+            if (elem_name.startsWith("\""))
+            {
+               params.add
+               (
+                  WORLD.get_strings_manager().get_string_as_element(elem_name)
+               );
+            }
+            else
+            {
+               params.add(WORLD.get_elements_manager().get(elem_name));
+            }
          }
 
          predicate.add_member(params);
@@ -275,6 +289,39 @@ ident_list returns [List<String> list]
    )*
    {
       result.add(0, ($first_element.text).replaceAll("\\.", "__"));
+
+      $list = result;
+   }
+;
+
+ident_or_string returns [String val]:
+   ID
+   {
+      $val =  ($ID.text).replaceAll("\\.", "__");
+   }
+
+   | STRING
+   {
+      $val = ($STRING.text);
+   }
+;
+
+ident_or_string_list returns [List<String> list]
+   @init
+   {
+      final List<String> result = new ArrayList<String>();
+   }
+
+   :
+   first_element=ident_or_string
+   (
+      (WS)* COMMA (WS)* next_element=ident_or_string
+      {
+         result.add(($next_element.val));
+      }
+   )*
+   {
+      result.add(0, ($first_element.val));
 
       $list = result;
    }
