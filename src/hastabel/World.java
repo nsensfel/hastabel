@@ -1,5 +1,7 @@
 package hastabel;
 
+import hastabel.lang.Type;
+
 import java.io.IOException;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -10,6 +12,8 @@ public class World extends LogicWorld
    private final Templates templates_mgr;
    private final TemplateInstances template_inst_mgr;
 
+   private final Strings strings_mgr;
+
    private final Types types_mgr;
 
    private boolean is_erroneous;
@@ -18,10 +22,16 @@ public class World extends LogicWorld
    {
       super();
 
+      final Type string_type;
+
       templates_mgr = new Templates();
       template_inst_mgr = new TemplateInstances();
 
       types_mgr = new Types();
+
+      string_type = types_mgr.declare(null, "String");
+
+      strings_mgr = new Strings(string_type, this);
 
       is_erroneous = false;
    }
@@ -65,5 +75,10 @@ public class World extends LogicWorld
    public Types get_types_manager ()
    {
       return types_mgr;
+   }
+
+   public Strings get_strings_manager ()
+   {
+      return strings_mgr;
    }
 }

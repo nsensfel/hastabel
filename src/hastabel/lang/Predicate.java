@@ -152,4 +152,13 @@ public class Predicate
 
       return sb.toString();
    }
+
+   public Formula as_formula (final List<Expression> params)
+   {
+      final Formula result;
+
+      result = new PredicateFormula(this, params);
+
+      return result;
+   }
 }

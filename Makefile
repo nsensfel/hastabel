@@ -46,6 +46,7 @@ ANTLR_SOURCES = $(wildcard $(SRC_DIR)/hastabel/*.g4)
 JAVA_SOURCES = \
 	$(filter-out $(ANTLR_SOURCES:.g4=.java), \
 		$(wildcard $(SRC_DIR)/hastabel/*.java) \
+		$(wildcard $(SRC_DIR)/hastabel/*/*.java) \
 	)\
 	$(ANTLR_SOURCES:.g4=.java)
 CLASSES = $(patsubst $(SRC_DIR)/%,$(BIN_DIR)/%, $(JAVA_SOURCES:.java=.class))
