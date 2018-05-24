@@ -12,13 +12,13 @@ class LogicWorld
 
    public LogicWorld ()
    {
-      elements_mgr = new Elements();
+      elements_mgr = new Elements(true);
       predicates_mgr = new Predicates(null);
    }
 
    public LogicWorld (final LogicWorld parent)
    {
-      elements_mgr = new Elements();
+      elements_mgr = new Elements(false);
       predicates_mgr = new Predicates(parent.get_predicates_manager());
    }
 

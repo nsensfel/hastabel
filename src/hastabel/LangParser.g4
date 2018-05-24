@@ -11,6 +11,7 @@ options
 
    import hastabel.lang.Predicate;
    import hastabel.lang.Element;
+   import hastabel.lang.Type;
 }
 
 @members
@@ -19,11 +20,12 @@ options
    /* of the class */
 }
 
-lang_file [World init_world]:
+lang_file [World init_world]
+
    @init
    {
       WORLD = init_world;
-   }
+   }:
 
    (lang_instr)*
    {
@@ -169,7 +171,7 @@ new_template
       Template template;
    }:
 
-   ID { template = WORLD.get_templates_manager().declare(($ID.text)); }
+   ID { template = WORLD.get_templates_manager().declare(WORLD, ($ID.text)); }
    (WS)* L_BRAKT (WS)* (template_instr[template])* (WS)* R_BRAKT
    {
    }
@@ -245,7 +247,7 @@ template_instr [Template template]:
          {
             final TemplateInstance ti;
 
-            ti = template.get_template_instances_manager.declare
+            ti = template.get_template_instances_manager().declare
                (
                   subtemplate,
                   elem_names.next()

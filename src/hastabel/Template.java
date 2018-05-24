@@ -35,7 +35,7 @@ public class Template extends LogicWorld
 
    public void add_contents_to (final String prefix, final Template t)
    {
-      add_contents_to(prefix, t.elements, t.predicates);
+      add_contents_to(prefix, t.elements_mgr, t.predicates_mgr);
    }
 
    public void add_contents_to

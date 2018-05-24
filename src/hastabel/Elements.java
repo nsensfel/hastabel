@@ -1,5 +1,8 @@
 package hastabel;
 
+import hastabel.lang.Element;
+import hastabel.lang.Type;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;

@@ -51,4 +51,19 @@ public class World extends LogicWorld
    {
       return !is_erroneous;
    }
+
+   public Templates get_templates_manager ()
+   {
+      return templates_mgr;
+   }
+
+   public TemplateInstances get_template_instances_manager ()
+   {
+      return template_inst_mgr;
+   }
+
+   public Types get_types_manager ()
+   {
+      return types_mgr;
+   }
 }
