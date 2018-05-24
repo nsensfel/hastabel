@@ -83,3 +83,7 @@ $(LIB_DIR):
 
 $(BIN_DIR):
 	mkdir -p $@
+
+##### For my private use...
+publish: $(TARGET)
+	scp $< dreamhost:~/noot-noot/tabellion/jar/
