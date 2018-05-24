@@ -64,8 +64,10 @@ clean:
 
 $(SRC_DIR)/hastabel/LangParser.java: $(ANTLR_SOURCES)
 
+$(SRC_DIR)/hastabel/PropertyParser.java: $(ANTLR_SOURCES)
+
 # Pattern rules can be used to generate multiple target in a single action.
-LangLexer%java LangParser%java: $(ANTLR_SOURCES)
+LangLexer%java LangParser%java PropertyLexer%java PropertyParser%java: $(ANTLR_SOURCES)
 	$(JAVA) -jar $(ANTLR_JAR) -lib $(SRC_DIR)/hastabel/ $^
 
 $(CLASSES): $(BIN_DIR)/%.class: $(SRC_DIR)/%.java $(BIN_DIR)

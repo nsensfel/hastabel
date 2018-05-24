@@ -161,4 +161,13 @@ public class Predicate
 
       return result;
    }
+
+   public Expression as_function (final List<Expression> params)
+   {
+      final Expression result;
+
+      result = new FunctionCall(this, params);
+
+      return result;
+   }
 }
