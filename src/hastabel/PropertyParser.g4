@@ -263,7 +263,7 @@ regex_special_predicate [Variable current_node]
          WORLD.invalidate();
       }
 
-      $result = string_matches.as_formula(params);
+      $result = string_matches.as_formula(Arrays.asList(params));
    }
 ;
 
@@ -336,13 +336,7 @@ not_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final List<Formula> list;
-
-      list = new ArrayList<Formula>();
-
-      list.add(($formula.result));
-
-      $result = Operator.NOT.as_formula(list);
+      $result = Operator.NOT.as_formula_(($formula.result));
    }
 ;
 
@@ -355,14 +349,7 @@ implies_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final List<Formula> list;
-
-      list = new ArrayList<Formula>();
-
-      list.add(($a.result));
-      list.add(($b.result));
-
-      $result = Operator.IMPLIES.as_formula(list);
+      $result = Operator.IMPLIES.as_formula_(($a.result), ($b.result));
    }
 ;
 
@@ -375,14 +362,7 @@ iff_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final List<Formula> list;
-
-      list = new ArrayList<Formula>();
-
-      list.add(($a.result));
-      list.add(($b.result));
-
-      $result = Operator.IFF.as_formula(list);
+      $result = Operator.IFF.as_formula_(($a.result), ($b.result));
    }
 ;
 
@@ -395,7 +375,7 @@ variable_declaration
    {
       final Type t;
 
-      t = WORLD.get_types_manager().get_type(($type.value));
+      t = WORLD.get_types_manager().get(($type.value));
 
       if (t == (Type) null)
       {
@@ -473,9 +453,9 @@ forall_operator [Variable current_node]
             + " operator is not part of HaStABeL's semantics and may not be"
             + " available on some solving platforms. As a result, its use is"
             + " discouraged (from l."
-            + ($EXISTS_OPERATOR_KW.getLine())
+            + ($FORALL_OPERATOR_KW.getLine())
             + " c."
-            + ($EXISTS_OPERATOR_KW.getCharPositionInLine())
+            + ($FORALL_OPERATOR_KW.getCharPositionInLine())
             + ")."
          );
       }
@@ -497,9 +477,17 @@ ctl_verifies_operator [Variable current_node]
    @init
    {
       final Variable root_node;
+      final Type node_type;
+
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
 
       root_node =
-         WORLD.get_variables_manager().generate_new_anonymous_variable();
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
       if (root_node == null)
       {
@@ -546,9 +534,17 @@ ax_operator [Variable current_node]
    @init
    {
       final Variable next_node;
+      final Type node_type;
+
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
 
       next_node =
-         WORLD.get_variables_manager().generate_new_anonymous_variable();
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
       if (next_node == null)
       {
@@ -563,8 +559,6 @@ ax_operator [Variable current_node]
 
    {
       final Predicate node_connect;
-      final List<Expression> node_connect_params;
-      final List<Formula> and_params;
 
       if (current_node == null)
       {
@@ -588,19 +582,15 @@ ax_operator [Variable current_node]
          WORLD.invalidate();
       }
 
-      node_connect_params = new ArrayList<Expression>(2);
-      node_connect_params.add(current_node);
-      node_connect_params.add(next_node);
-
-      and_params = new ArrayList<Formula>(2);
-      and_params.add(node_connect.as_formula(node_connect_params));
-      and_params.add(($formula.result));
-
       $result =
          new Quantifier
          (
             next_node,
-            Operator.AND.as_formula(internal),
+            Operator.AND.as_formula_
+            (
+               node_connect.as_formula_(current_node, next_node),
+               ($formula.result)
+            ),
             true
          );
    }
@@ -612,9 +602,17 @@ ex_operator [Variable current_node]
    @init
    {
       final Variable next_node;
+      final Type node_type;
+
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
 
       next_node =
-         WORLD.get_variables_manager().generate_new_anonymous_variable();
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
       if (next_node == null)
       {
@@ -629,8 +627,6 @@ ex_operator [Variable current_node]
 
    {
       final Predicate node_connect;
-      final List<Expression> node_connect_params;
-      final List<Formula> and_params;
 
       if (current_node == null)
       {
@@ -638,9 +634,9 @@ ex_operator [Variable current_node]
          (
             "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
             + " (l."
-            + ($AX_OPERATOR_KW.getLine())
+            + ($EX_OPERATOR_KW.getLine())
             + " c."
-            + ($AX_OPERATOR_KW.getCharPositionInLine())
+            + ($EX_OPERATOR_KW.getCharPositionInLine())
             + ")."
          );
 
@@ -654,19 +650,15 @@ ex_operator [Variable current_node]
          WORLD.invalidate();
       }
 
-      node_connect_params = new ArrayList<Expression>(2);
-      node_connect_params.add(current_node);
-      node_connect_params.add(next_node);
-
-      and_params = new ArrayList<Formula>(2);
-      and_params.add(node_connect.as_formula(node_connect_params));
-      and_params.add(($formula.result));
-
       $result =
          new Quantifier
          (
             next_node,
-            Operator.AND.as_formula(internal),
+            Operator.AND.as_formula_
+            (
+               node_connect.as_formula_(current_node, next_node),
+               ($formula.result)
+            ),
             false
          );
    }
@@ -678,9 +670,17 @@ ag_operator [Variable current_node]
    @init
    {
       final Variable next_node;
+      final Type node_type;
+
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
 
       next_node =
-         WORLD.get_variables_manager().generate_new_anonymous_variable();
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
       if (next_node == null)
       {
@@ -693,9 +693,9 @@ ag_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Predicate node_connect;
-      final List<Expression> node_connect_params;
-      final List<Formula> and_params;
+      final Type path_type;
+      final Variable next_path;
+      final Predicate is_in_path, is_path_of;
 
       if (current_node == null)
       {
@@ -703,55 +703,51 @@ ag_operator [Variable current_node]
          (
             "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
             + " (l."
-            + ($AX_OPERATOR_KW.getLine())
+            + ($AG_OPERATOR_KW.getLine())
             + " c."
-            + ($AX_OPERATOR_KW.getCharPositionInLine())
+            + ($AG_OPERATOR_KW.getCharPositionInLine())
             + ")."
          );
 
          WORLD.invalidate();
       }
 
-      node_connect = WORLD.get_predicates_manager().get("contains_node");
+      path_type = WORLD.get_types_manager().get("path");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
 
-      if (node_connect == null)
+      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
       {
          WORLD.invalidate();
       }
 
-      node_connect_params = new ArrayList<Expression>(2);
-      node_connect_params.add(current_node);
-      node_connect_params.add(next_node);
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
 
-      and_params = new ArrayList<Formula>(2);
-      and_params.add(node_connect.as_formula(node_connect_params));
-      and_params.add(($formula.result));
+      if (next_path == null)
+      {
+         WORLD.invalidate();
+      }
 
       $result =
          new Quantifier
          (
-            next_node,
-            Operator.AND.as_formula(internal),
-            true
-         );
-
-      //////////////////////////////////////////////////////////////////////////
-      $result =
-         ($formula.result).forAll
-         (
-            next_node.oneOf
+            next_path,
+            Operator.IMPLIES.as_formula_
             (
-               current_node.join
+               is_path_of.as_formula_(next_path, current_node),
+               new Quantifier
                (
-                  Main.get_model().get_predicate_as_relation
+                  next_node,
+                  Operator.IMPLIES.as_formula_
                   (
-                     "is_path_of"
-                  ).transpose() /* (is_path_of path node), we want the path. */
-               ).join
-               (
-                  Main.get_model().get_predicate_as_relation("contains_node")
+                     is_in_path.as_formula_(next_node, next_path),
+                     ($formula.result)
+                  ),
+                  true
                )
-            )
+            ),
+            true
          );
    }
 ;
@@ -761,10 +757,23 @@ eg_operator [Variable current_node]
 
    @init
    {
-      final Variable next_node, chosen_path;
+      final Variable next_node;
+      final Type node_type;
 
-      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      next_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if (next_node == null)
+      {
+         WORLD.invalidate();
+      }
    }
 
    :
@@ -773,6 +782,10 @@ eg_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final Type path_type;
+      final Variable next_path;
+      final Predicate is_in_path, is_path_of;
+
       if (current_node == null)
       {
          System.err.println
@@ -785,31 +798,45 @@ eg_operator [Variable current_node]
             + ")."
          );
 
-         System.exit(-1);
+         WORLD.invalidate();
+      }
+
+      path_type = WORLD.get_types_manager().get("path");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+
+      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      if (next_path == null)
+      {
+         WORLD.invalidate();
       }
 
       $result =
-         ($formula.result).forAll
+         new Quantifier
          (
-            next_node.oneOf
+            next_path,
+            Operator.IMPLIES.as_formula_
             (
-               chosen_path.join
+               is_path_of.as_formula_(next_path, current_node),
+               new Quantifier
                (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forSome
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
+                  next_node,
+                  Operator.IMPLIES.as_formula_
                   (
-                     "is_path_of"
-                  ).transpose() /* (is_path_of path node), we want the path. */
+                     is_in_path.as_formula_(next_node, next_path),
+                     ($formula.result)
+                  ),
+                  true
                )
-            )
+            ),
+            false
          );
    }
 ;
@@ -819,10 +846,23 @@ af_operator [Variable current_node]
 
    @init
    {
-      final Variable next_node, chosen_path;
+      final Variable next_node;
+      final Type node_type;
 
-      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      next_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if (next_node == null)
+      {
+         WORLD.invalidate();
+      }
    }
 
    :
@@ -831,6 +871,10 @@ af_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final Type path_type;
+      final Variable next_path;
+      final Predicate is_in_path, is_path_of;
+
       if (current_node == null)
       {
          System.err.println
@@ -843,31 +887,45 @@ af_operator [Variable current_node]
             + ")."
          );
 
-         System.exit(-1);
+         WORLD.invalidate();
+      }
+
+      path_type = WORLD.get_types_manager().get("path");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+
+      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      if (next_path == null)
+      {
+         WORLD.invalidate();
       }
 
       $result =
-         ($formula.result).forSome
+         new Quantifier
          (
-            next_node.oneOf
+            next_path,
+            Operator.IMPLIES.as_formula_
             (
-               chosen_path.join
+               is_path_of.as_formula_(next_path, current_node),
+               new Quantifier
                (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forAll
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
+                  next_node,
+                  Operator.IMPLIES.as_formula_
                   (
-                     "is_path_of"
-                  ).transpose() /* (is_path_of path node), we want the path. */
+                     is_in_path.as_formula_(next_node, next_path),
+                     ($formula.result)
+                  ),
+                  false
                )
-            )
+            ),
+            true
          );
    }
 ;
@@ -877,10 +935,23 @@ ef_operator [Variable current_node]
 
    @init
    {
-      final Variable next_node, chosen_path;
+      final Variable next_node;
+      final Type node_type;
 
-      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      next_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if (next_node == null)
+      {
+         WORLD.invalidate();
+      }
    }
 
    :
@@ -889,6 +960,10 @@ ef_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final Type path_type;
+      final Variable next_path;
+      final Predicate is_in_path, is_path_of;
+
       if (current_node == null)
       {
          System.err.println
@@ -901,31 +976,45 @@ ef_operator [Variable current_node]
             + ")."
          );
 
-         System.exit(-1);
+         WORLD.invalidate();
+      }
+
+      path_type = WORLD.get_types_manager().get("path");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+
+      if ((path_type == null) || (is_path_of == null) || (node_connect == null))
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      if (next_path == null)
+      {
+         WORLD.invalidate();
       }
 
       $result =
-         ($formula.result).forSome
+         new Quantifier
          (
-            next_node.oneOf
+            next_path,
+            Operator.IMPLIES.as_formula_
             (
-               chosen_path.join
+               is_path_of.as_formula_(next_path, current_node),
+               new Quantifier
                (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forSome
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
+                  next_node,
+                  Operator.IMPLIES.as_formula_
                   (
-                     "is_path_of"
-                  ).transpose() /* (is_path_of path node), we want the path. */
+                     is_in_path.as_formula_(next_node, next_path),
+                     ($formula.result)
+                  ),
+                  false
                )
-            )
+            ),
+            false
          );
    }
 ;
@@ -935,11 +1024,26 @@ au_operator [Variable current_node]
 
    @init
    {
-      final Variable f1_node, f2_node, chosen_path;
+      final Variable f1_node, f2_node;
+      final Type node_type;
 
-      f1_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      f2_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      f1_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      f2_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if ((f1_node == null) || (f2_node == null))
+      {
+         WORLD.invalidate();
+      }
    }
 
    :
@@ -949,6 +1053,10 @@ au_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final Type path_type;
+      final Variable next_path;
+      final Predicate is_path_of, is_in_path, is_before;
+
       if (current_node == null)
       {
          System.err.println
@@ -961,46 +1069,62 @@ au_operator [Variable current_node]
             + ")."
          );
 
-         System.exit(-1);
+         WORLD.invalidate();
+      }
+
+      path_type = WORLD.get_types_manager().get("path");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_before = WORLD.get_predicates_manager().get("is_before");
+
+      if
+      (
+         (path_type == null)
+         || (is_path_of == null)
+         || (is_in_path == null)
+         || (is_before == null)
+      )
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      if (next_path == null)
+      {
+         WORLD.invalidate();
       }
 
       $result =
-         ($f1.result).forAll
+         new Quantifier
          (
-            f1_node.oneOf
+            next_path,
+            Operator.IMPLIES.as_formula_
             (
-               f2_node.join
+               is_path_of.as_formula_(next_path, current_node),
+               new Quantifier
                (
-                  chosen_path.join
+                  f2_node,
+                  Operator.AND.as_formula_
                   (
-                     Main.get_model().get_predicate_as_relation("is_before")
-                  ).transpose()
+                     is_in_path.as_formula_(f2_node, next_path),
+                     ($f2.result),
+                     new Quantifier
+                     (
+                        f1_node,
+                        Operator.IMPLIES.as_formula_
+                        (
+                           is_before.as_formula_(f1_node, f2_node, next_path),
+                           ($f1.result)
+                        ),
+                        true
+                     )
+                  ),
+                  false
                )
             )
-         ).and
-         (
-            ($f2.result)
-         ).forSome
-         (
-            f2_node.oneOf
-            (
-               chosen_path.join
-               (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forAll
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
-                  (
-                     "is_path_of"
-                  ).transpose()
-               )
-            )
+            true
          );
    }
 ;
@@ -1010,11 +1134,26 @@ eu_operator [Variable current_node]
 
    @init
    {
-      final Variable f1_node, f2_node, chosen_path;
+      final Variable f1_node, f2_node;
+      final Type node_type;
 
-      f1_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      f2_node = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      f1_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      f2_node =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if ((f1_node == null) || (f2_node == null))
+      {
+         WORLD.invalidate();
+      }
    }
 
    :
@@ -1024,6 +1163,10 @@ eu_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final Type path_type;
+      final Variable next_path;
+      final Predicate is_path_of, is_in_path, is_before;
+
       if (current_node == null)
       {
          System.err.println
@@ -1036,45 +1179,62 @@ eu_operator [Variable current_node]
             + ")."
          );
 
-         System.exit(-1);
+         WORLD.invalidate();
+      }
+
+      path_type = WORLD.get_types_manager().get("path");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_before = WORLD.get_predicates_manager().get("is_before");
+
+      if
+      (
+         (path_type == null)
+         || (is_path_of == null)
+         || (is_in_path == null)
+         || (is_before == null)
+      )
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      if (next_path == null)
+      {
+         WORLD.invalidate();
       }
 
       $result =
-         ($f1.result).forAll
+         new Quantifier
          (
-            f1_node.oneOf
+            next_path,
+            Operator.IMPLIES.as_formula_
             (
-               f2_node.join
+               is_path_of.as_formula_(next_path, current_node),
+               new Quantifier
                (
-                  chosen_path.join
+                  f2_node,
+                  Operator.AND.as_formula_
                   (
-                     Main.get_model().get_predicate_as_relation("is_before")
-                  ).transpose()
+                     is_in_path.as_formula_(f2_node, next_path),
+                     ($f2.result),
+                     new Quantifier
+                     (
+                        f1_node,
+                        Operator.IMPLIES.as_formula_
+                        (
+                           is_before.as_formula_(f1_node, f2_node, next_path),
+                           ($f1.result)
+                        ),
+                        true
+                     )
+                  ),
+                  false
                )
             )
-         ).and(
-            ($f2.result)
-         ).forSome
-         (
-            f2_node.oneOf
-            (
-               chosen_path.join
-               (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forSome
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
-                  (
-                     "is_path_of"
-                  ).transpose()
-               )
-            )
+            false
          );
    }
 ;
@@ -1085,11 +1245,23 @@ depth_no_parent_operator [Variable current_node]
 
    @init
    {
-      final Variable node_of_path, node_for_f, chosen_path;
+      final Variable node_for_f;
+      final Type node_type;
 
-      node_of_path = Main.get_variable_manager().generate_new_anonymous_variable();
-      node_for_f = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      node_for_f =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if (node_for_f == null)
+      {
+         WORLD.invalidate();
+      }
    }
 
    :
@@ -1188,11 +1360,23 @@ depth_no_change_operator [Variable current_node]
 
    @init
    {
-      final Variable node_of_path, node_for_f, chosen_path;
+      final Variable node_for_f;
+      final Type node_type;
 
-      node_of_path = Main.get_variable_manager().generate_new_anonymous_variable();
-      node_for_f = Main.get_variable_manager().generate_new_anonymous_variable();
-      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_type = WORLD.get_types_manager().get("node");
+
+      if (node_type == null)
+      {
+         WORLD.invalidate();
+      }
+
+      node_for_f =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if (node_for_f == null)
+      {
+         WORLD.invalidate();
+      }
    }
 
    :

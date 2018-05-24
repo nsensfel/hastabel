@@ -162,6 +162,20 @@ public class Predicate
       return result;
    }
 
+   public Formula as_formula_ (final Expression... e_params)
+   {
+      final ArrayList<Expression> params;
+
+      params = new ArrayList<Expression>();
+
+      for (final Expression e: e_params)
+      {
+         params.add(e);
+      }
+
+      return as_formula(params);
+   }
+
    public Expression as_function (final List<Expression> params)
    {
       final Expression result;
@@ -169,5 +183,19 @@ public class Predicate
       result = new FunctionCall(this, params);
 
       return result;
+   }
+
+   public Formula as_function_ (final Expression... e_params)
+   {
+      final ArrayList<Expression> params;
+
+      params = new ArrayList<Expression>();
+
+      for (final Expression e: e_params)
+      {
+         params.add(e);
+      }
+
+      return as_function(params);
    }
 }

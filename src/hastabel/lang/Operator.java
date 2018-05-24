@@ -28,4 +28,18 @@ public enum Operator
 
       return result;
    }
+
+   public Formula as_formula_ (final Formula... e_params)
+   {
+      final ArrayList<Formula> params;
+
+      params = new ArrayList<Formula>();
+
+      for (final Formula f: e_params)
+      {
+         params.add(f);
+      }
+
+      return as_formula(params);
+   }
 }
