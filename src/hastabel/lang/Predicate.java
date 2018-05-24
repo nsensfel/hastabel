@@ -31,6 +31,23 @@ public class Predicate
       }
    }
 
+   public void add_member_ (final Element... elements)
+   {
+      final ArrayList<Element> params;
+
+      params = new ArrayList<Element>();
+
+      for (final Element e: elements)
+      {
+         params.add(e);
+      }
+
+      if (is_compatible_with(params))
+      {
+         members.add(params);
+      }
+   }
+
    public boolean is_compatible_with (final List<Element> elements)
    {
       final Iterator<Element> e_iter;
