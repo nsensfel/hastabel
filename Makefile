@@ -4,7 +4,7 @@ BIN_DIR ?= ${CURDIR}/bin/
 LIB_DIR ?= ${CURDIR}/lib/
 
 TARGET ?= hastabel.jar
-INSTALL_DIR ?= .
+INSTALL_DIR ?= $(LIB_DIR)
 
 #### Where to get the missing Jar files.
 JAR_SOURCE ?= "https://noot-noot.org/tabellion/jar/"
@@ -70,7 +70,8 @@ LangLexer%java LangParser%java: $(ANTLR_SOURCES)
 $(CLASSES): $(BIN_DIR)/%.class: $(SRC_DIR)/%.java $(BIN_DIR)
 	$(JAVAC) -cp $(CLASSPATH) -d $(BIN_DIR) $<
 
-%.jar: $(LIB_DIR)
+%.jar:
+	$(MAKE) $(LIB_DIR)
 	echo "Attempting to download missing jar '$@'..."
 	cd $(LIB_DIR); $(DOWNLOADER) "$(JAR_SOURCE)/$(notdir $@)"
 
