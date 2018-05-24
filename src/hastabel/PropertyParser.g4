@@ -583,15 +583,14 @@ ax_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.forall
          (
             next_node,
-            Operator.AND.as_formula_
+            Formula.and
             (
                node_connect.as_formula_(current_node, next_node),
                ($formula.result)
-            ),
-            true
+            )
          );
    }
 ;
@@ -651,15 +650,14 @@ ex_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.exists
          (
             next_node,
-            Operator.AND.as_formula_
+            Formula.and
             (
                node_connect.as_formula_(current_node, next_node),
                ($formula.result)
-            ),
-            false
+            )
          );
    }
 ;
@@ -730,24 +728,22 @@ ag_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.forall
          (
             next_path,
-            Operator.IMPLIES.as_formula_
+            Formula.implies
             (
                is_path_of.as_formula_(next_path, current_node),
-               new Quantifier
+               Formula.forall
                (
                   next_node,
-                  Operator.IMPLIES.as_formula_
+                  Formula.implies
                   (
                      is_in_path.as_formula_(next_node, next_path),
                      ($formula.result)
-                  ),
-                  true
+                  )
                )
-            ),
-            true
+            )
          );
    }
 ;
@@ -819,24 +815,22 @@ eg_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.exists
          (
             next_path,
-            Operator.IMPLIES.as_formula_
+            Formula.and
             (
                is_path_of.as_formula_(next_path, current_node),
-               new Quantifier
+               Formula.forall
                (
                   next_node,
-                  Operator.IMPLIES.as_formula_
+                  Formula.implies
                   (
                      is_in_path.as_formula_(next_node, next_path),
                      ($formula.result)
-                  ),
-                  true
+                  )
                )
-            ),
-            false
+            )
          );
    }
 ;
@@ -908,24 +902,22 @@ af_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.forall
          (
             next_path,
-            Operator.IMPLIES.as_formula_
+            Formula.implies
             (
                is_path_of.as_formula_(next_path, current_node),
-               new Quantifier
+               Formula.exists
                (
                   next_node,
-                  Operator.IMPLIES.as_formula_
+                  Formula.and
                   (
                      is_in_path.as_formula_(next_node, next_path),
                      ($formula.result)
-                  ),
-                  false
+                  )
                )
-            ),
-            true
+            )
          );
    }
 ;
@@ -997,24 +989,22 @@ ef_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.exists
          (
             next_path,
-            Operator.IMPLIES.as_formula_
+            Formula.and
             (
                is_path_of.as_formula_(next_path, current_node),
-               new Quantifier
+               Formula.exists
                (
                   next_node,
-                  Operator.IMPLIES.as_formula_
+                  Formula.and
                   (
                      is_in_path.as_formula_(next_node, next_path),
                      ($formula.result)
-                  ),
-                  false
+                  )
                )
-            ),
-            false
+            )
          );
    }
 ;
@@ -1097,34 +1087,31 @@ au_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.forall
          (
             next_path,
-            Operator.IMPLIES.as_formula_
+            Formula.implies
             (
                is_path_of.as_formula_(next_path, current_node),
-               new Quantifier
+               Formula.exists
                (
                   f2_node,
-                  Operator.AND.as_formula_
+                  Formula.and
                   (
                      is_in_path.as_formula_(f2_node, next_path),
                      ($f2.result),
-                     new Quantifier
+                     Formula.forall
                      (
                         f1_node,
-                        Operator.IMPLIES.as_formula_
+                        Formula.implies
                         (
                            is_before.as_formula_(f1_node, f2_node, next_path),
                            ($f1.result)
-                        ),
-                        true
+                        )
                      )
-                  ),
-                  false
+                  )
                )
             )
-            true
          );
    }
 ;
@@ -1207,34 +1194,31 @@ eu_operator [Variable current_node]
       }
 
       $result =
-         new Quantifier
+         Formula.exists
          (
             next_path,
-            Operator.IMPLIES.as_formula_
+            Formula.and
             (
                is_path_of.as_formula_(next_path, current_node),
-               new Quantifier
+               Formula.exists
                (
                   f2_node,
-                  Operator.AND.as_formula_
+                  Formula.and
                   (
                      is_in_path.as_formula_(f2_node, next_path),
                      ($f2.result),
-                     new Quantifier
+                     Formula.forall
                      (
                         f1_node,
-                        Operator.IMPLIES.as_formula_
+                        Formula.implies
                         (
                            is_before.as_formula_(f1_node, f2_node, next_path),
                            ($f1.result)
-                        ),
-                        true
+                        )
                      )
-                  ),
-                  false
+                  )
                )
             )
-            false
          );
    }
 ;
@@ -1270,10 +1254,9 @@ depth_no_parent_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Predicate depth_relation, lower_than_relation;
-
-      depth_relation = Main.get_model().get_predicate_as_relation("depth");
-      lower_than_relation = Main.get_model().get_predicate_as_relation("depth");
+      final Type path_type;
+      final Variable next_path, node_of_path;
+      final Predicate depth, is_path_of, is_lower_than, is_in_path, is_before;
 
       if (current_node == null)
       {
@@ -1287,68 +1270,84 @@ depth_no_parent_operator [Variable current_node]
             + ")."
          );
 
-         System.exit(-1);
+         WORLD.invalidate();
+      }
+
+      path_type = WORLD.get_types_manager().get("path");
+      depth = WORLD.get_predicates_manager().get("depth");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_before = WORLD.get_predicates_manager().get("is_before");
+      is_lower_than = WORLD.get_predicates_manager().get("is_lower_than");
+
+      if
+      (
+         (path_type == null)
+         || (is_path_of == null)
+         || (is_in_path == null)
+         || (is_lower_than == null)
+         || (is_before == null)
+         || (depth == null)
+      )
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      node_of_path =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if ((next_path == null) || (node_of_path == null))
+      {
+         WORLD.invalidate();
       }
 
       $result =
-         node_of_path.join
+         Formula.forall
          (
-            depth_relation
-         ).product
-         (
-            current_node.join(depth_relation)
-         ).in
-         (
-            lower_than_relation
-         ).not
-         (
-            /* (not (is_lower_than [depth node_of_path] [depth current_node])) */
-         ).forAll
-         (
-            node_of_path.oneOf
+            next_path,
+            Formula.implies
             (
-               node_for_f.join
+               is_path_of.as_formula_(next_path, current_node),
+               Formula.exists
                (
-                  chosen_path.join
+                  node_for_f,
+                  Formula.and
                   (
-                     Main.get_model().get_predicate_as_relation("is_before")
-                  ).transpose()
-               )
-            )
-         ).and
-         (
-            ($formula.result).and
-            (
-               current_node.join
-               (
-                  depth_relation
-               ).product
-               (
-                  node_for_f
-               ).in
-               (
-                  lower_than_relation
-               ).not()
-            )
-         ).forSome
-         (
-            node_for_f.oneOf
-            (
-               chosen_path.join
-               (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forAll
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
-                  (
-                     "is_path_of"
-                  ).transpose()
+                     is_in_path.as_formula_(node_for_f, next_path),
+                     ($formula.result),
+                     Formula.not
+                     (
+                        is_lower_than.as_formula_
+                        (
+                           depth.as_function_(node_for_f),
+                           depth.as_function_(current_node)
+                        )
+                     ),
+                     Formula.forall
+                     (
+                        node_of_path,
+                        Formula.implies
+                        (
+                           is_before.as_formula_
+                           (
+                              node_of_path,
+                              node_for_f,
+                              next_path
+                           ),
+                           Formula.not
+                           (
+                              is_lower_than.as_formula_
+                              (
+                                 depth.as_function_(node_of_path),
+                                 depth.as_function_(current_node)
+                              )
+                           )
+                        )
+                     )
+                  )
                )
             )
          );
@@ -1385,9 +1384,9 @@ depth_no_change_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Predicate depth_relation;
-
-      depth_relation = Main.get_model().get_predicate_as_relation("depth");
+      final Type path_type;
+      final Variable next_path, node_of_path;
+      final Predicate depth, is_path_of, is_in_path, is_before;
 
       if (current_node == null)
       {
@@ -1404,48 +1403,73 @@ depth_no_change_operator [Variable current_node]
          System.exit(-1);
       }
 
+      path_type = WORLD.get_types_manager().get("path");
+      depth = WORLD.get_predicates_manager().get("depth");
+      is_path_of = WORLD.get_predicates_manager().get("is_path_of");
+      is_in_path = WORLD.get_predicates_manager().get("is_in_path");
+      is_before = WORLD.get_predicates_manager().get("is_before");
+
+      if
+      (
+         (path_type == null)
+         || (is_path_of == null)
+         || (is_in_path == null)
+         || (is_before == null)
+         || (depth == null)
+      )
+      {
+         WORLD.invalidate();
+      }
+
+      next_path =
+         WORLD.get_variables_manager().new_anonymous_variable(path_type);
+
+      node_of_path =
+         WORLD.get_variables_manager().new_anonymous_variable(node_type);
+
+      if ((next_path == null) || (node_of_path == null))
+      {
+         WORLD.invalidate();
+      }
+
       $result =
-         node_of_path.join
+         Formula.forall
          (
-            depth_relation
-         ).eq
-         (
-            node_for_f.join(depth_relation)
-         /* (eq? [depth node_of_path] [depth node_for_f]) */
-         ).forAll
-         (
-            node_of_path.oneOf
+            next_path,
+            Formula.implies
             (
-               node_for_f.join
+               is_path_of.as_formula_(next_path, current_node),
+               Formula.exists
                (
-                  chosen_path.join
+                  node_for_f,
+                  Formula.and
                   (
-                     Main.get_model().get_predicate_as_relation("is_before")
-                  ).transpose()
-               )
-            )
-         ).and
-         (
-            ($formula.result)
-         ).forSome
-         (
-            node_for_f.oneOf
-            (
-               chosen_path.join
-               (
-                  Main.get_model().get_predicate_as_relation("contains_node")
-               )
-            )
-         ).forAll
-         (
-            chosen_path.oneOf
-            (
-               current_node.join
-               (
-                  Main.get_model().get_predicate_as_relation
-                  (
-                     "is_path_of"
-                  ).transpose()
+                     is_in_path.as_formula_(node_for_f, next_path),
+                     ($formula.result),
+                     Formula.equals
+                     (
+                        depth.as_function_(node_for_f),
+                        depth.as_function_(current_node)
+                     ),
+                     Formula.forall
+                     (
+                        node_of_path,
+                        Formula.implies
+                        (
+                           is_before.as_formula_
+                           (
+                              node_of_path,
+                              node_for_f,
+                              next_path
+                           ),
+                           Formula.equals
+                           (
+                              depth.as_function_(node_of_path),
+                              depth.as_function_(current_node)
+                           )
+                        )
+                     )
+                  )
                )
             )
          );
