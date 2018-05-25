@@ -252,17 +252,21 @@ regex_special_predicate [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final Type string_type;
       final Expression[] params;
       final hastabel.lang.Predicate string_matches;
 
       params = new Expression[2];
+      string_type = WORLD.get_types_manager().get("string");
       string_matches =
          WORLD.get_predicates_manager().get("string_matches");
 
-      if (string_matches == null)
+      if ((string_type == null) || (string_matches == null))
       {
          WORLD.invalidate();
       }
+      string_type.mark_as_used();
+      string_matches.mark_as_used();
 
       params[0] = ($id_or_string_or_fun.value);
       params[1] =
@@ -273,7 +277,6 @@ regex_special_predicate [Variable current_node]
          WORLD.invalidate();
       }
 
-      string_matches.mark_as_used();
 
       $result = string_matches.as_formula(Arrays.asList(params));
    }

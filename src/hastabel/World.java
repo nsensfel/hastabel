@@ -31,7 +31,7 @@ public class World extends LogicWorld
 
       types_mgr = new Types();
 
-      string_type = types_mgr.declare(null, "String");
+      string_type = types_mgr.declare(null, "string");
 
       strings_mgr = new Strings(string_type, this);
       variables_mgr = new Variables();
