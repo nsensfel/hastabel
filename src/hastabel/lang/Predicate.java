@@ -325,6 +325,25 @@ public class Predicate
 
    public Set<List<Element>> get_relevant_members
    (
+      final List<Type> signature
+   )
+   {
+      final Set<List<Element>> result;
+
+      result = new HashSet<List<Element>>();
+
+      for (final List<Element> member: members)
+      {
+         if (is_compatible_with_signature2(member, signature))
+         {
+            result.add(member);
+         }
+      }
+
+      return result;
+   }
+   public Set<List<Element>> get_relevant_members
+   (
       final Set<List<Type>> relevant_signatures
    )
    {
@@ -380,6 +399,31 @@ public class Predicate
             {
                result.add(member);
             }
+         }
+      }
+
+      return result;
+   }
+
+   public Set<List<Element>> get_relevant_partial_members
+   (
+      final List<Type> signature
+   )
+   {
+      final Set<List<Element>> result;
+
+      result = new HashSet<List<Element>>();
+
+      for (final List<Element> member: members)
+      {
+         final List<Element> potential_member;
+
+         potential_member =
+            mask_through_partial_signature(member, signature);
+
+         if (potential_member != null)
+         {
+            result.add(member);
          }
       }
 
@@ -476,6 +520,8 @@ public class Predicate
                + " support partial signature."
             );
          }
+
+         return new PredicateFormula(this, partial_signature, params);
       }
 
       return as_formula(params);
