@@ -73,6 +73,8 @@ tag_item:
          WORLD.invalidate();
       }
 
+      t.mark_as_used();
+
       if (WORLD.get_variables_manager().seek(t, ($var.text)) == null)
       {
          WORLD.invalidate();
