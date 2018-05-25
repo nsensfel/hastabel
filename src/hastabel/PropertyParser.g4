@@ -180,6 +180,8 @@ predicate [Variable current_node]
          ids.add(0, current_node);
       }
 
+      predicate.mark_as_used();
+
       $result = predicate.as_formula(ids);
    }
 ;
@@ -221,6 +223,8 @@ function [Variable current_node]
       {
          ids.add(0, current_node);
       }
+
+      predicate.mark_as_used_as_function();
 
       $result = predicate.as_function(ids);
    }
@@ -268,6 +272,8 @@ regex_special_predicate [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      string_matches.mark_as_used();
 
       $result = string_matches.as_formula(Arrays.asList(params));
    }
@@ -399,6 +405,7 @@ variable_declaration
          WORLD.invalidate();
       }
 
+      t.mark_as_used();
       $variable = WORLD.get_variables_manager().add_variable(t, ($var.text));
 
       if (($variable) == null)
@@ -492,6 +499,8 @@ ctl_verifies_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_type.mark_as_used();
+
       root_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
@@ -549,6 +558,8 @@ ax_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_type.mark_as_used();
+
       next_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
@@ -588,6 +599,8 @@ ax_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_connect.mark_as_used();
+
       $result =
          Formula.forall
          (
@@ -615,6 +628,8 @@ ex_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      node_type.mark_as_used();
 
       next_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
@@ -655,6 +670,8 @@ ex_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_connect.mark_as_used();
+
       $result =
          Formula.exists
          (
@@ -682,6 +699,8 @@ ag_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      node_type.mark_as_used();
 
       next_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
@@ -724,6 +743,10 @@ ag_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      path_type.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
 
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
@@ -769,6 +792,8 @@ eg_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_type.mark_as_used();
+
       next_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
@@ -811,6 +836,10 @@ eg_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      path_type.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
 
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
@@ -856,6 +885,8 @@ af_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_type.mark_as_used();
+
       next_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
@@ -898,6 +929,11 @@ af_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      path_type.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
+
 
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
@@ -943,6 +979,8 @@ ef_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_type.mark_as_used();
+
       next_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
@@ -985,6 +1023,10 @@ ef_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      path_type.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
 
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
@@ -1029,6 +1071,8 @@ au_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      node_type.mark_as_used();
 
       f1_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
@@ -1084,6 +1128,11 @@ au_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      path_type.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
+      is_before.mark_as_used();
+
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
 
@@ -1136,6 +1185,8 @@ eu_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      node_type.mark_as_used();
 
       f1_node =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
@@ -1191,6 +1242,11 @@ eu_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      path_type.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
+      is_before.mark_as_used();
+
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
 
@@ -1245,6 +1301,8 @@ depth_no_parent_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      node_type.mark_as_used();
+
       node_for_f =
          WORLD.get_variables_manager().new_anonymous_variable(node_type);
 
@@ -1260,7 +1318,7 @@ depth_no_parent_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Type path_type;
+      final Type path_type, depth_type;
       final Variable next_path, node_of_path;
       final hastabel.lang.Predicate depth, is_path_of, is_lower_than, contains_node, is_before;
 
@@ -1280,6 +1338,7 @@ depth_no_parent_operator [Variable current_node]
       }
 
       path_type = WORLD.get_types_manager().get("path");
+      depth_type = WORLD.get_types_manager().get("depth");
       depth = WORLD.get_predicates_manager().get("depth");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
       contains_node = WORLD.get_predicates_manager().get("contains_node");
@@ -1298,6 +1357,14 @@ depth_no_parent_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      path_type.mark_as_used();
+      depth_type.mark_as_used();
+      depth.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
+      is_before.mark_as_used();
+      is_lower_than.mark_as_used();
 
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);
@@ -1390,7 +1457,7 @@ depth_no_change_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Type path_type;
+      final Type path_type, depth_type;
       final Variable next_path, node_of_path;
       final hastabel.lang.Predicate depth, is_path_of, contains_node, is_before;
 
@@ -1410,6 +1477,7 @@ depth_no_change_operator [Variable current_node]
       }
 
       path_type = WORLD.get_types_manager().get("path");
+      depth_type = WORLD.get_types_manager().get("path");
       depth = WORLD.get_predicates_manager().get("depth");
       is_path_of = WORLD.get_predicates_manager().get("is_path_of");
       contains_node = WORLD.get_predicates_manager().get("contains_node");
@@ -1426,6 +1494,13 @@ depth_no_change_operator [Variable current_node]
       {
          WORLD.invalidate();
       }
+
+      path_type.mark_as_used();
+      depth_type.mark_as_used();
+      depth.mark_as_used();
+      contains_node.mark_as_used();
+      is_path_of.mark_as_used();
+      is_before.mark_as_used();
 
       next_path =
          WORLD.get_variables_manager().new_anonymous_variable(path_type);

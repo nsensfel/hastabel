@@ -12,6 +12,7 @@ public class Type
    private final Set<Type> sub_types;
    private final Type super_type;
    private final String name;
+   private boolean is_used;
 
    public Type (final Type super_type, final String name)
    {
@@ -19,6 +20,8 @@ public class Type
       this.elements = new HashSet<Element>();
       this.sub_types = new HashSet<Type>();
       this.super_type = super_type;
+
+      is_used = false;
    }
 
    public void add_sub_type (final Type t)
@@ -34,6 +37,16 @@ public class Type
    public String get_name ()
    {
       return name;
+   }
+
+   public void mark_as_used ()
+   {
+      is_used = true;
+   }
+
+   public boolean is_used ()
+   {
+      return is_used;
    }
 
    public void add_element (final Element e)

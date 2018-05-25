@@ -14,6 +14,7 @@ public class Predicate
    private final Collection<List<Type>> signatures;
    private final Set<List<Element>> members;
    private final String name;
+   private boolean is_used;
 
    public Predicate (final List<Type> signature, final String name)
    {
@@ -23,6 +24,8 @@ public class Predicate
       this.name = name;
 
       members = new HashSet<List<Element>>();
+
+      is_used = false;
    }
 
    public Predicate (final Collection<List<Type>> signatures, final String name)
@@ -116,6 +119,72 @@ public class Predicate
       return members;
    }
 
+   public Set<List<Type>> get_relevant_signatures ()
+   {
+      final Set<List<Type>> result;
+
+      result = new HashSet<List<Type>>();
+
+      for (final List<Type> signature: signatures)
+      {
+         boolean relevant_signature;
+
+         relevant_signature = true;
+
+         for (final Type sig_type: signature)
+         {
+            if (!sig_type.is_used())
+            {
+               relevant_signature = false;
+
+               break;
+            }
+         }
+
+         if (relevant_signature)
+         {
+            result.add(signature);
+         }
+      }
+
+      return result;
+   }
+
+   public Set<List<Element>> get_relevant_members
+   (
+      final Set<List<Type>> relevant_signatures
+   )
+   {
+      final Set<List<Element>> result;
+
+      Set<List<Element>> current_members, next_members;
+
+      next_members = members;
+
+      result = new HashSet<List<Element>>();
+
+      for (final List<Type> signature: relevant_signatures)
+      {
+         current_members = next_members;
+
+         next_members = new HashSet<List<Element>>();
+
+         for (final List<Element> member: current_members)
+         {
+            if (is_compatible_with_signature(member, signature))
+            {
+               result.add(member);
+            }
+            else
+            {
+               next_members.add(member);
+            }
+         }
+      }
+
+      return result;
+   }
+
    public Predicate shallow_copy ()
    {
       return new Predicate(signatures, name);
@@ -171,6 +240,26 @@ public class Predicate
       }
 
       return sb.toString();
+   }
+
+   public void mark_as_used ()
+   {
+      is_used = true;
+   }
+
+   public void mark_as_used_as_function ()
+   {
+      for (final List<Type> signature: signatures)
+      {
+         signature.get(signature.size() - 1).mark_as_used();
+      }
+
+      is_used = true;
+   }
+
+   public boolean is_used ()
+   {
+      return is_used;
    }
 
    @Override
