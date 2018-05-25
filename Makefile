@@ -2,8 +2,10 @@
 SRC_DIR ?= ${CURDIR}/src/
 BIN_DIR ?= ${CURDIR}/bin/
 LIB_DIR ?= ${CURDIR}/lib/
+TMP_DIR ?= /tmp/hastabel_standalone.jar.build/
 
 TARGET ?= hastabel.jar
+STANDALONE ?= hastabel_standalone.jar
 INSTALL_DIR ?= $(LIB_DIR)
 
 #### Where to get the missing Jar files.
@@ -52,6 +54,11 @@ JAVA_SOURCES = \
 CLASSES = $(patsubst $(SRC_DIR)/%,$(BIN_DIR)/%, $(JAVA_SOURCES:.java=.class))
 
 ## Makefile Rules ##############################################################
+$(STANDALONE): $(TMP_DIR) $(TARGET) $(ANTLR_JAR)
+	unzip -d $(TMP_DIR) -uo $(TARGET)
+	unzip -d $(TMP_DIR) -uo $(ANTLR_JAR)
+	jar -cvf $@ -C $(TMP_DIR) .
+
 $(TARGET): $(ANTLR_JAR) $(JAVA_SOURCES) $(CLASSES)
 	rm -f $(TARGET) $(INSTALL_DIR)/$@
 	$(JAR) cf $@ -C $(BIN_DIR) .
@@ -78,6 +85,9 @@ $(CLASSES): $(BIN_DIR)/%.class: $(SRC_DIR)/%.java $(BIN_DIR)
 	echo "Attempting to download missing jar '$@'..."
 	cd $(LIB_DIR); $(DOWNLOADER) "$(JAR_SOURCE)/$(notdir $@)"
 
+$(TMP_DIR):
+	mkdir -p $@
+
 $(LIB_DIR):
 	mkdir -p $@
 
@@ -85,5 +95,5 @@ $(BIN_DIR):
 	mkdir -p $@
 
 ##### For my private use...
-publish: $(TARGET)
-	scp $< dreamhost:~/noot-noot/tabellion/jar/
+publish: $(TARGET) $(STANDALONE)
+	scp $^ dreamhost:~/noot-noot/tabellion/jar/
