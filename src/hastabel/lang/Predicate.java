@@ -397,7 +397,7 @@ public class Predicate
 
             if (potential_member != null)
             {
-               result.add(member);
+               result.add(potential_member);
             }
          }
       }
@@ -423,7 +423,7 @@ public class Predicate
 
          if (potential_member != null)
          {
-            result.add(member);
+            result.add(potential_member);
          }
       }
 
