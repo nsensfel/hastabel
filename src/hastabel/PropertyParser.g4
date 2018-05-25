@@ -90,6 +90,55 @@ id_or_string_or_fun [Variable current_node]
    {
       if (($ID.text).equals("_"))
       {
+         System.err.println
+         (
+            "[E] The use of an joker is not allowed here (l."
+            + ($ID.getLine())
+            + " c."
+            + ($ID.getCharPositionInLine())
+            + ")."
+         );
+
+         WORLD.invalidate();
+      }
+      else
+      {
+         $value = WORLD.get_variables_manager().get(($ID.text));
+
+         if (($value) == null)
+         {
+            WORLD.invalidate();
+         }
+      }
+   }
+
+   |
+   STRING
+   {
+      $value =
+         WORLD.get_strings_manager().get_string_as_element(($STRING.text));
+
+      if (($value) == null)
+      {
+         WORLD.invalidate();
+      }
+   }
+
+   |
+   function[current_node]
+   {
+      $value = ($function.result);
+   }
+;
+
+id_or_string_or_fun_or_joker [Variable current_node]
+   returns [Expression value]
+
+   :
+   ID
+   {
+      if (($ID.text).equals("_"))
+      {
          $value = null;
       }
       else
@@ -144,12 +193,34 @@ id_list [Variable current_node]
    }
 ;
 
+id_or_joker_list [Variable current_node]
+   returns [List<Expression> list]
+
+   @init
+   {
+      final List<Expression> result = new ArrayList<Expression>();
+   }
+
+   :
+   (
+      (WS)+
+      id_or_string_or_fun_or_joker[current_node]
+      {
+         result.add(($id_or_string_or_fun_or_joker.value));
+      }
+   )*
+
+   {
+      $list = result;
+   }
+;
+
 predicate [Variable current_node]
    returns [Formula result]:
 
    (WS)* L_PAREN
       ID
-      id_list[current_node]
+      id_or_joker_list[current_node]
    (WS)* R_PAREN
 
    {
@@ -175,7 +246,7 @@ predicate [Variable current_node]
          WORLD.invalidate();
       }
 
-      ids = ($id_list.list);
+      ids = ($id_or_joker_list.list);
 
       if (current_node != null)
       {
@@ -184,7 +255,7 @@ predicate [Variable current_node]
 
       predicate.mark_as_used();
 
-      $result = predicate.as_formula(ids);
+      $result = predicate.as_partial_formula(ids);
    }
 ;
 

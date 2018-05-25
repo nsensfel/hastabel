@@ -2,23 +2,17 @@ package hastabel.lang;
 
 abstract class NamedExpression extends Expression
 {
-   public final Type type;
    public final String name;
 
    public NamedExpression (final Type type, final String name)
    {
-      this.type = type;
+      super(type);
       this.name = name;
    }
 
    public String get_name ()
    {
       return name;
-   }
-
-   public Type get_type ()
-   {
-      return type;
    }
 
    @Override
