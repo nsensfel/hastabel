@@ -55,7 +55,7 @@ public class Predicate
 
    public void add_member (final List<Element> elements)
    {
-      if (is_compatible_with(elements))
+      if (is_compatible_with2(elements) != null)
       {
          members.add(elements);
       }
@@ -77,13 +77,10 @@ public class Predicate
          params.add(e);
       }
 
-      if (is_compatible_with(params))
-      {
-         members.add(params);
-      }
+      add_member(params);
    }
 
-   private boolean add_and_activate_partial_signature
+   private boolean add_partial_signature
    (
       final List<Type> partial_signature
    )
@@ -96,9 +93,9 @@ public class Predicate
       {
          if (is_compatible_with_partial_signature(signature, partial_signature))
          {
-            activate_signature(signature);
-
             can_be_added = true;
+
+            break;
          }
       }
 
@@ -108,17 +105,6 @@ public class Predicate
       }
 
       return can_be_added;
-   }
-
-   private void activate_signature
-   (
-      final List<Type> signature
-   )
-   {
-      for (final Type type: signature)
-      {
-         type.mark_as_used();
-      }
    }
 
    private boolean is_compatible_with_partial_signature
@@ -160,6 +146,35 @@ public class Predicate
 
    private boolean is_compatible_with_signature
    (
+      final List<Expression> elements,
+      final List<Type> signature
+   )
+   {
+      final Iterator<Expression> e_iter;
+      final Iterator<Type> s_iter;
+
+      if (elements.size() != signature.size())
+      {
+         return false;
+      }
+
+      e_iter = elements.iterator();
+      s_iter = signature.iterator();
+
+      while (e_iter.hasNext())
+      {
+         if (!s_iter.next().includes(e_iter.next().get_type()))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   // "incompatible types: List<Element> cannot be converted to List<Expression>"
+   private boolean is_compatible_with_signature2
+   (
       final List<Element> elements,
       final List<Type> signature
    )
@@ -186,17 +201,75 @@ public class Predicate
       return true;
    }
 
-   public boolean is_compatible_with (final List<Element> elements)
+   private List<Element> mask_through_partial_signature
+   (
+      final List<Element> elements,
+      final List<Type> signature
+   )
+   {
+      final List<Element> result;
+      final Iterator<Element> e_iter;
+      final Iterator<Type> s_iter;
+
+      if (elements.size() != signature.size())
+      {
+         return null;
+      }
+
+      result = new ArrayList<Element>();
+      e_iter = elements.iterator();
+      s_iter = signature.iterator();
+
+      while (e_iter.hasNext())
+      {
+         final Type s_next;
+         final Element e_next;
+
+         e_next = e_iter.next();
+         s_next = s_iter.next();
+
+         if (s_next == null)
+         {
+            continue;
+         }
+         else if (!s_next.includes(e_next.get_type()))
+         {
+            return null;
+         }
+         else
+         {
+            result.add(e_next);
+         }
+      }
+
+      return result;
+   }
+
+   public List<Type> is_compatible_with (final List<Expression> elements)
    {
       for (final List<Type> signature: signatures)
       {
          if (is_compatible_with_signature(elements, signature))
          {
-            return true;
+            return signature;
          }
       }
 
-      return false;
+      return null;
+   }
+
+   // "incompatible types: List<Element> cannot be converted to List<Expression>"
+   public List<Type> is_compatible_with2 (final List<Element> elements)
+   {
+      for (final List<Type> signature: signatures)
+      {
+         if (is_compatible_with_signature2(elements, signature))
+         {
+            return signature;
+         }
+      }
+
+      return null;
    }
 
    public String get_name ()
@@ -207,6 +280,11 @@ public class Predicate
    public Collection<List<Type>> get_signatures ()
    {
       return signatures;
+   }
+
+   public Collection<List<Type>> get_partial_signatures ()
+   {
+      return partial_signatures;
    }
 
    public Set<List<Element>> get_members ()
@@ -266,13 +344,41 @@ public class Predicate
 
          for (final List<Element> member: current_members)
          {
-            if (is_compatible_with_signature(member, signature))
+            if (is_compatible_with_signature2(member, signature))
             {
                result.add(member);
             }
             else
             {
                next_members.add(member);
+            }
+         }
+      }
+
+      return result;
+   }
+
+   public Set<List<Element>> get_relevant_partial_members
+   (
+      final Set<List<Type>> relevant_signatures
+   )
+   {
+      final Set<List<Element>> result;
+
+      result = new HashSet<List<Element>>();
+
+      for (final List<Type> signature: relevant_signatures)
+      {
+         for (final List<Element> member: members)
+         {
+            final List<Element> potential_member;
+
+            potential_member =
+               mask_through_partial_signature(member, signature);
+
+            if (potential_member != null)
+            {
+               result.add(member);
             }
          }
       }
@@ -362,7 +468,7 @@ public class Predicate
 
       if (is_partial)
       {
-         if (!add_and_activate_partial_signature(partial_signature))
+         if (!add_partial_signature(partial_signature))
          {
             System.err.println
             (
@@ -428,11 +534,16 @@ public class Predicate
 
    public Formula as_formula (final List<Expression> params)
    {
-      final Formula result;
+      final List<Type> signature;
 
-      result = new PredicateFormula(this, params);
+      signature = is_compatible_with(params);
 
-      return result;
+      if (signature == null)
+      {
+         return null;
+      }
+
+      return new PredicateFormula(this, signature, params);
    }
 
    public Formula as_formula_ (final Expression... e_params)
