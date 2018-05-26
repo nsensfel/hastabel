@@ -44,6 +44,7 @@ public enum Operator
       return as_formula(params);
    }
 
+   @Override
    public String toString ()
    {
       switch (this)

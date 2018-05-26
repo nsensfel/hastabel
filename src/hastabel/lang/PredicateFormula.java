@@ -63,7 +63,7 @@ public class PredicateFormula extends Formula
       sb = new StringBuilder();
 
       sb.append("(");
-      sb.append(parent.toString());
+      sb.append(parent.get_name());
 
       for (final Expression param: params)
       {
