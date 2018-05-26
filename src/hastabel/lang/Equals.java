@@ -11,4 +11,14 @@ public class Equals extends Formula
       this.a = a;
       this.b = b;
    }
+
+   public Expression get_first_operand ()
+   {
+      return a;
+   }
+
+   public Expression get_second_operand ()
+   {
+      return b;
+   }
 }

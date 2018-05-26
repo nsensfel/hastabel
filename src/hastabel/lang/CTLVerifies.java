@@ -19,4 +19,19 @@ public class CTLVerifies extends Formula
       this.parent = parent;
       this.formula = formula;
    }
+
+   public Variable get_root_node ()
+   {
+      return root_node;
+   }
+
+   public Expression get_process_expression ()
+   {
+      return parent;
+   }
+
+   public Formula get_ctl_formula ()
+   {
+      return formula;
+   }
 }

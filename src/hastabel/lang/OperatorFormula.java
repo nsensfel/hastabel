@@ -16,4 +16,14 @@ class OperatorFormula extends Formula
       this.parent = parent;
       this.params = params;
    }
+
+   public Operator get_operator ()
+   {
+      return parent;
+   }
+
+   public List<Formula> get_operands ()
+   {
+      return params;
+   }
 }

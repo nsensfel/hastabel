@@ -4,6 +4,7 @@ import hastabel.lang.Type;
 import hastabel.lang.Variable;
 import hastabel.lang.Expression;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,11 @@ public class Variables
       seeked.put(var_name, var);
 
       return var;
+   }
+
+   public Collection<Variable> get_all_seeked ()
+   {
+      return seeked.values();
    }
 
    public Variable add_variable (final Type type, final String var_name)

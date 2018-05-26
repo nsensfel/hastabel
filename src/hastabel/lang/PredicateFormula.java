@@ -19,4 +19,19 @@ class PredicateFormula extends Formula
       this.signature = signature;
       this.params = params;
    }
+
+   public Predicate get_predicate ()
+   {
+      return parent;
+   }
+
+   public List<Expression> get_parameters ()
+   {
+      return params;
+   }
+
+   public List<Type> get_signature ()
+   {
+      return signature;
+   }
 }

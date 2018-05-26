@@ -17,4 +17,14 @@ class FunctionCall extends Expression
       this.parent = parent;
       this.params = params;
    }
+
+   public Predicate get_function ()
+   {
+      return parent;
+   }
+
+   public List<Expression> get_arguments ()
+   {
+      return params;
+   }
 }

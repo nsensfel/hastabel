@@ -19,4 +19,19 @@ public class Quantifier extends Formula
       this.formula = formula;
       this.is_forall = is_forall;
    }
+
+   public boolean is_forall ()
+   {
+      return is_forall;
+   }
+
+   public Variable get_variable ()
+   {
+      return parent;
+   }
+
+   public Formula get_formula ()
+   {
+      return formula;
+   }
 }
