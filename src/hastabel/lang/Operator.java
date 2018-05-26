@@ -43,4 +43,28 @@ public enum Operator
 
       return as_formula(params);
    }
+
+   public String toString ()
+   {
+      switch (this)
+      {
+         case NOT: return "not";
+         case AND: return "and";
+         case OR: return "or";
+         case IFF: return "iff";
+         case IMPLIES: return "implies";
+         case AX: return "ax";
+         case EX: return "ex";
+         case AG: return "ag";
+         case EG: return "eg";
+         case AF: return "af";
+         case EF: return "ef";
+         case AU: return "au";
+         case EU: return "eu";
+         case NPB: return "npb";
+         case NDCB: return "ndcb";
+      }
+
+      return "???";
+   }
 }

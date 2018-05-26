@@ -1,6 +1,6 @@
 package hastabel.lang;
 
-abstract class NamedExpression extends Expression
+public abstract class NamedExpression extends Expression
 {
    public final String name;
 
@@ -39,6 +39,6 @@ abstract class NamedExpression extends Expression
    @Override
    public String toString ()
    {
-      return (type.get_name() + " " + name);
+      return name;
    }
 }

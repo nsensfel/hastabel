@@ -21,4 +21,25 @@ public class Equals extends Formula
    {
       return b;
    }
+
+   @Override
+   public boolean equals (Object o)
+   {
+      final Equals e;
+
+      if ((o == null) || !(o instanceof Equals))
+      {
+         return false;
+      }
+
+      e = (Equals) o;
+
+      return (e.a.equals(a) && e.b.equals(b));
+   }
+
+   @Override
+   public String toString ()
+   {
+      return "(eq " + a.toString() + " " + b.toString() + ")";
+   }
 }

@@ -34,4 +34,44 @@ public class Quantifier extends Formula
    {
       return formula;
    }
+
+   @Override
+   public boolean equals (Object o)
+   {
+      final Quantifier e;
+
+      if ((o == null) || !(o instanceof Quantifier))
+      {
+         return false;
+      }
+
+      e = (Quantifier) o;
+
+      return
+         (
+            e.parent.equals(parent)
+            && e.formula.equals(formula)
+            && (e.is_forall == is_forall)
+         );
+   }
+
+   @Override
+   public String toString ()
+   {
+      final StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      sb.append("(");
+      sb.append(is_forall ? "forall" : "exists");
+      sb.append(" ");
+      sb.append(parent.get_name());
+      sb.append(" ");
+      sb.append(parent.get_type().get_name());
+      sb.append(" ");
+      sb.append(formula.toString());
+      sb.append(")");
+
+      return sb.toString();
+   }
 }
