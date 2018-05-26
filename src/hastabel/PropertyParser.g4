@@ -593,6 +593,7 @@ ctl_verifies_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
+      final hastabel.lang.Predicate is_start_node;
       final Variable process;
 
       if (current_node != null)
@@ -612,9 +613,27 @@ ctl_verifies_operator [Variable current_node]
          WORLD.invalidate();
       }
 
+      is_start_node = WORLD.get_predicates_manager().get("is_start_node");
+
+      if (is_start_node == null)
+      {
+         WORLD.invalidate();
+      }
+
+      is_start_node.mark_as_used();
+
       process = WORLD.get_variables_manager().get(($ps.text));
 
-      $result = new CTLVerifies(root_node, process, ($f.result));
+      $result =
+         Formula.exists
+         (
+            root_node,
+            Formula.and
+            (
+               is_start_node.as_formula_(root_node, process),
+               ($f.result)
+            )
+         );
    }
 ;
 
