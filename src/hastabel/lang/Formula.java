@@ -33,7 +33,7 @@ public abstract class Formula
 
    public static Formula exists (final Variable v, final Formula f)
    {
-      return new Quantifier(v, f, true);
+      return new Quantifier(v, f, false);
    }
 
    public static Formula equals (final Expression a, final Expression b)

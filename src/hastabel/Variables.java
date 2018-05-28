@@ -4,20 +4,22 @@ import hastabel.lang.Type;
 import hastabel.lang.Variable;
 import hastabel.lang.Expression;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Variables
 {
    private final Map<String, Variable> from_string;
-   private final Map<String, Variable> seeked;
+   private final List<Variable> seeked;
    private int next_id;
 
    public Variables ()
    {
       from_string = new HashMap<String, Variable>();
-      seeked = new HashMap<String, Variable>();
+      seeked = new ArrayList<Variable>();
    }
 
    private String new_anonymous_variable_name ()
@@ -36,14 +38,14 @@ public class Variables
       final Variable var;
 
       var = add_variable(type, var_name);
-      seeked.put(var_name, var);
+      seeked.add(var);
 
       return var;
    }
 
-   public Collection<Variable> get_all_seeked ()
+   public List<Variable> get_all_seeked ()
    {
-      return seeked.values();
+      return seeked;
    }
 
    public Variable add_variable (final Type type, final String var_name)
