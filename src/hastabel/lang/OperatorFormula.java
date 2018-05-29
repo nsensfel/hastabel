@@ -55,7 +55,15 @@ public class OperatorFormula extends Formula
       for (final Formula param: params)
       {
          sb.append(" ");
-         sb.append(param.toString());
+
+         if (param == null)
+         {
+            sb.append("NULL");
+         }
+         else
+         {
+            sb.append(param.toString());
+         }
       }
 
       sb.append(")");

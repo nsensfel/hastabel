@@ -338,6 +338,7 @@ regex_special_predicate [Variable current_node]
       {
          WORLD.invalidate();
       }
+
       string_type.mark_as_used();
       string_matches.mark_as_used();
 
@@ -1255,7 +1256,7 @@ au_operator [Variable current_node]
                         f1_node,
                         Formula.implies
                         (
-                           is_before.as_formula_(f1_node, f2_node, next_path),
+                           is_before.as_formula_(next_path, f1_node, f2_node),
                            ($f1.result)
                         )
                      )
@@ -1369,7 +1370,7 @@ eu_operator [Variable current_node]
                         f1_node,
                         Formula.implies
                         (
-                           is_before.as_formula_(f1_node, f2_node, next_path),
+                           is_before.as_formula_(next_path, f1_node, f2_node),
                            ($f1.result)
                         )
                      )
@@ -1455,7 +1456,7 @@ depth_no_parent_operator [Variable current_node]
 
       path_type.mark_as_used();
       depth_type.mark_as_used();
-      depth.mark_as_used();
+      depth.mark_as_used_as_function();
       contains_node.mark_as_used();
       is_path_of.mark_as_used();
       is_before.mark_as_used();
@@ -1501,9 +1502,9 @@ depth_no_parent_operator [Variable current_node]
                         (
                            is_before.as_formula_
                            (
+                              next_path,
                               node_of_path,
-                              node_for_f,
-                              next_path
+                              node_for_f
                            ),
                            Formula.not
                            (
@@ -1592,7 +1593,7 @@ depth_no_change_operator [Variable current_node]
 
       path_type.mark_as_used();
       depth_type.mark_as_used();
-      depth.mark_as_used();
+      depth.mark_as_used_as_function();
       contains_node.mark_as_used();
       is_path_of.mark_as_used();
       is_before.mark_as_used();
@@ -1634,9 +1635,9 @@ depth_no_change_operator [Variable current_node]
                         (
                            is_before.as_formula_
                            (
+                              next_path,
                               node_of_path,
-                              node_for_f,
-                              next_path
+                              node_for_f
                            ),
                            Formula.equals
                            (

@@ -37,6 +37,10 @@ lang_instr:
    {
    }
 
+   | (WS)* ADD_FUNCTION_KW (WS)* new_function (WS)*
+   {
+   }
+
    | (WS)* ADD_PREDICATE_KW (WS)* new_predicate (WS)*
    {
    }
@@ -175,7 +179,26 @@ new_predicate:
          signature.add(WORLD.get_types_manager().get(type_names.next()));
       }
 
-      WORLD.get_predicates_manager().declare(signature, ($ID.text));
+      WORLD.get_predicates_manager().declare(signature, ($ID.text), false);
+   }
+;
+
+new_function:
+   ID (WS)* L_PAREN (WS)* ident_list (WS)* R_PAREN
+   {
+      final List<Type> signature;
+      final Iterator<String> type_names;
+
+      signature = new ArrayList<Type>();
+
+      type_names = ($ident_list.list).iterator();
+
+      while (type_names.hasNext())
+      {
+         signature.add(WORLD.get_types_manager().get(type_names.next()));
+      }
+
+      WORLD.get_predicates_manager().declare(signature, ($ID.text), true);
    }
 ;
 

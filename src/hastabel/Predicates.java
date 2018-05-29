@@ -23,11 +23,16 @@ public class Predicates
       this.parent_mgr = parent_mgr;
    }
 
-   public Predicate declare (final List<Type> signature, final String name)
+   public Predicate declare
+   (
+      final List<Type> signature,
+      final String name,
+      final boolean can_be_used_as_function
+   )
    {
       final Predicate result, previous_instance;
 
-      result = new Predicate(signature, name);
+      result = new Predicate(signature, name, can_be_used_as_function);
 
       previous_instance = from_name.get(name);
 
@@ -44,6 +49,11 @@ public class Predicates
       }
 
       previous_instance.add_signature(signature);
+
+      if (can_be_used_as_function)
+      {
+         previous_instance.mark_as_function();
+      }
 
       return null;
    }

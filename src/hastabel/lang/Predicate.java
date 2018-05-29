@@ -16,41 +16,49 @@ public class Predicate
    private final Type function_type;
    private final Set<List<Element>> members;
    private final String name;
-   private boolean is_used;
+   private boolean can_be_used_as_function;
+   private boolean is_used_as_predicate, is_used_as_function;
 
-   public Predicate (final List<Type> signature, final String name)
+   public Predicate
+   (
+      final List<Type> signature,
+      final String name,
+      final boolean can_be_used_as_function
+   )
    {
       partial_signatures = new ArrayList<List<Type>>(0);
       signatures = new ArrayList<List<Type>>(1);
       signatures.add(signature);
 
       this.function_type = signature.get(signature.size() - 1);
-
       this.name = name;
+      this.can_be_used_as_function = can_be_used_as_function;
 
       members = new HashSet<List<Element>>();
 
-      is_used = false;
+      is_used_as_predicate = false;
+      is_used_as_function = false;
    }
 
    public Predicate
    (
-      final Collection<List<Type>> signatures,
-      final Collection<List<Type>> partial_signatures,
-      final Type function_type,
-      final String name
+      final Predicate source
    )
    {
-      this.signatures = new ArrayList<List<Type>>();
-      this.signatures.addAll(signatures);
+      signatures = new ArrayList<List<Type>>();
+      signatures.addAll(source.signatures);
 
-      this.partial_signatures = new ArrayList<List<Type>>(0);
-      this.partial_signatures.addAll(partial_signatures);
+      partial_signatures = new ArrayList<List<Type>>(0);
+      partial_signatures.addAll(source.partial_signatures);
 
-      this.name = name;
-      this.function_type = function_type;
+      name = source.name;
+      function_type = source.function_type;
 
       members = new HashSet<List<Element>>();
+
+      can_be_used_as_function = source.can_be_used_as_function;
+      is_used_as_predicate = source.is_used_as_predicate;
+      is_used_as_function = source.is_used_as_function;
    }
 
    public void add_member (final List<Element> elements)
@@ -154,6 +162,34 @@ public class Predicate
       final Iterator<Type> s_iter;
 
       if (elements.size() != signature.size())
+      {
+         return false;
+      }
+
+      e_iter = elements.iterator();
+      s_iter = signature.iterator();
+
+      while (e_iter.hasNext())
+      {
+         if (!s_iter.next().includes(e_iter.next().get_type()))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   private boolean is_compatible_with_fun_signature
+   (
+      final List<Expression> elements,
+      final List<Type> signature
+   )
+   {
+      final Iterator<Expression> e_iter;
+      final Iterator<Type> s_iter;
+
+      if (elements.size() != (signature.size() - 1))
       {
          return false;
       }
@@ -432,7 +468,7 @@ public class Predicate
 
    public Predicate shallow_copy ()
    {
-      return new Predicate(signatures, partial_signatures, function_type, name);
+      return new Predicate(this);
    }
 
    @Override
@@ -529,7 +565,7 @@ public class Predicate
 
    public void mark_as_used ()
    {
-      is_used = true;
+      is_used_as_predicate = true;
    }
 
    public void mark_as_used_as_function ()
@@ -539,12 +575,27 @@ public class Predicate
          signature.get(signature.size() - 1).mark_as_used();
       }
 
-      is_used = true;
+      is_used_as_function = true;
+   }
+
+   public void mark_as_function ()
+   {
+      can_be_used_as_function = true;
    }
 
    public boolean is_used ()
    {
-      return is_used;
+      return is_used_as_predicate || is_used_as_function;
+   }
+
+   public boolean is_used_as_predicate ()
+   {
+      return is_used_as_predicate;
+   }
+
+   public boolean is_used_as_function ()
+   {
+      return is_used_as_function;
    }
 
    @Override
@@ -586,6 +637,19 @@ public class Predicate
 
       if (signature == null)
       {
+         System.err.print
+         (
+            "[E] No compatible signature for ("
+            + name
+         );
+
+         for (final Expression expr: params)
+         {
+            System.err.print(" " + expr + "/" + expr.get_type().get_name());
+         }
+
+         System.err.println(").");
+
          return null;
       }
 

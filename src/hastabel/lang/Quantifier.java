@@ -15,6 +15,14 @@ public class Quantifier extends Formula
       final boolean is_forall
    )
    {
+      if (parent == null)
+      {
+         System.out.println("Ooops f:" + formula.toString() + ", forall:" + is_forall);
+      }
+      if (formula == null)
+      {
+         System.out.println("p:" + parent.toString() + ", forall:" + is_forall);
+      }
       this.parent = parent;
       this.formula = formula;
       this.is_forall = is_forall;

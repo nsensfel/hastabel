@@ -13,7 +13,8 @@ SUB_TYPE_OF: '::';
 STAR: '*';
 
 ADD_TYPE_KW: 'add_type' SEP;
-ADD_PREDICATE_KW: ('add_predicate' | 'add_function') SEP;
+ADD_PREDICATE_KW: 'add_predicate' SEP;
+ADD_FUNCTION_KW: 'add_function' SEP;
 ADD_TEMPLATE_KW: 'add_template' SEP;
 
 WS: SEP;
