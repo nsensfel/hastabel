@@ -115,13 +115,19 @@ id_or_string_or_fun [Variable current_node]
    |
    STRING
    {
+      final Type string_type;
+
       $value =
          WORLD.get_strings_manager().get_string_as_element(($STRING.text));
 
-      if (($value) == null)
+      string_type = WORLD.get_types_manager().get("string");
+
+      if ((($value) == null) || (string_type == null))
       {
          WORLD.invalidate();
       }
+
+      string_type.mark_as_used();
    }
 
    |
@@ -155,13 +161,19 @@ id_or_string_or_fun_or_joker [Variable current_node]
    |
    STRING
    {
+      final Type string_type;
+
       $value =
          WORLD.get_strings_manager().get_string_as_element(($STRING.text));
 
-      if (($value) == null)
+      string_type = WORLD.get_types_manager().get("string");
+
+      if ((($value) == null) || (string_type == null))
       {
          WORLD.invalidate();
       }
+
+      string_type.mark_as_used();
    }
 
    |

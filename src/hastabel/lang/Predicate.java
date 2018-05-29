@@ -67,6 +67,22 @@ public class Predicate
       {
          members.add(elements);
       }
+      else
+      {
+         System.err.print
+         (
+            "[E] The predicate "
+            + name
+            + " has no signatures accepting ("
+         );
+
+         for (final Element elt: elements)
+         {
+            System.err.print(" " + elt.get_name());
+         }
+
+         System.err.println(").");
+      }
    }
 
    public Type get_function_type ()
@@ -585,7 +601,7 @@ public class Predicate
 
    public boolean is_used ()
    {
-      return is_used_as_predicate || is_used_as_function;
+      return (is_used_as_predicate || is_used_as_function);
    }
 
    public boolean is_used_as_predicate ()

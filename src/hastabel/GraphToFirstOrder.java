@@ -123,9 +123,9 @@ public class GraphToFirstOrder
                {
                   is_before.add_member_
                   (
+                     path_e,
                      path.nodes.get(j).get_element(),
-                     n_i,
-                     path_e
+                     n_i
                   );
                }
             }
