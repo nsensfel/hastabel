@@ -99,7 +99,7 @@ public class GraphToFirstOrder
       final Predicate is_before
    )
    {
-      for (final Node initial_node: INITIAL_NODES)
+      for (final Node initial_node: NODE_FROM_ELEMENT.values())
       {
          for (final Path path: get_all_paths_from(initial_node))
          {
@@ -117,7 +117,7 @@ public class GraphToFirstOrder
 
                n_i = path.nodes.get(i).get_element();
 
-               contains_node.add_member_( path_e, n_i);
+               contains_node.add_member_(path_e, n_i);
 
                for (int j = 0; j < i; j++)
                {
