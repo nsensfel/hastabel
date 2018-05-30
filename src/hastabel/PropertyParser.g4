@@ -713,7 +713,7 @@ ax_operator [Variable current_node]
          Formula.forall
          (
             next_node,
-            Formula.and
+            Formula.implies
             (
                node_connect.as_formula_(current_node, next_node),
                ($formula.result)
