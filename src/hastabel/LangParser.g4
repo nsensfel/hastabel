@@ -45,6 +45,10 @@ lang_instr:
    {
    }
 
+   | (WS)* ADD_NAMING_KW (WS)* new_naming (WS)*
+   {
+   }
+
    | (WS)* ADD_TEMPLATE_KW (WS)* new_template (WS)*
    {
    }
@@ -161,6 +165,22 @@ new_type:
    | ID
    {
       WORLD.get_types_manager().declare(null, ($ID.text));
+   }
+;
+
+new_naming:
+   ID (WS)* L_PAREN (WS)* ident_list (WS)* R_PAREN
+   {
+      final Predicate pred;
+
+      pred = WORLD.get_predicates_manager().get(($ID.text));
+
+      if (pred == null)
+      {
+         WORLD.invalidate();
+      }
+
+      pred.set_naming(($ident_list.list));
    }
 ;
 

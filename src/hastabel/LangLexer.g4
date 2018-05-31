@@ -14,6 +14,7 @@ STAR: '*';
 
 ADD_TYPE_KW: 'add_type' SEP;
 ADD_PREDICATE_KW: 'add_predicate' SEP;
+ADD_NAMING_KW: 'add_naming' SEP;
 ADD_FUNCTION_KW: 'add_function' SEP;
 ADD_TEMPLATE_KW: 'add_template' SEP;
 

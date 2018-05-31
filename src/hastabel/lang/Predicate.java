@@ -16,6 +16,7 @@ public class Predicate
    private final Type function_type;
    private final Set<List<Element>> members;
    private final String name;
+   private List<String> naming;
    private boolean can_be_used_as_function;
    private boolean is_used_as_predicate, is_used_as_function;
 
@@ -102,6 +103,16 @@ public class Predicate
       }
 
       add_member(params);
+   }
+
+   public void set_naming (final List<String> naming)
+   {
+      this.naming = naming;
+   }
+
+   public List<String> get_naming ()
+   {
+      return naming;
    }
 
    private boolean add_partial_signature
