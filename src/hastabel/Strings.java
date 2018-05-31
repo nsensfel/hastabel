@@ -17,6 +17,7 @@ public class Strings
 {
 
    private final Map<String, Element> AS_ELEMENT;
+   private final Map<String, String> FROM_ELEMENT_NAME;
    private final Collection<Pattern> regexes;
 
    private final Type string_type;
@@ -33,6 +34,7 @@ public class Strings
    public Strings (final Type string_type, final LogicWorld world)
    {
       AS_ELEMENT = new HashMap<String, Element>();
+      FROM_ELEMENT_NAME = new HashMap<String, String>();
       regexes = new ArrayList<Pattern>();
 
       anon_string_prefix = "_string_"; /* TODO: use a program param. */
@@ -60,6 +62,7 @@ public class Strings
          anon_string_count += 1;
 
          AS_ELEMENT.put(str, elem);
+         FROM_ELEMENT_NAME.put(elem.get_name(), str);
       }
 
       return elem;
@@ -71,6 +74,11 @@ public class Strings
       regexes.add(Pattern.compile(str.substring(1, (str.length() - 1))));
 
       return get_string_as_element(str);
+   }
+
+   public String get_string_from_element_name (final String e_name)
+   {
+      return FROM_ELEMENT_NAME.get(e_name);
    }
 
    public void populate_regex_predicate (final Predicate rp)
